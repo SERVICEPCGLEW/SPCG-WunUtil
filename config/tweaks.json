@@ -1,0 +1,1830 @@
+﻿{
+  "WPFTweaksActivity": {
+    "Content": "Historial de Actividad - Desactivar",
+    "Description": "Borra documentos recientes, portapapeles y el historial de ejecución.",
+    "category": "Ajustes Esenciales",
+    "panel": "1",
+    "registry": [
+      {
+        "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\System",
+        "Name": "EnableActivityFeed",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\System",
+        "Name": "PublishUserActivities",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\System",
+        "Name": "UploadUserActivities",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      }
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/essential-tweaks/activity"
+  },
+  "WPFTweaksHiber": {
+    "Content": "Hibernación - Desactivar",
+    "Description": "La hibernación está pensada para laptops ya que guarda lo que está en memoria antes de apagar. Raramente debe usarse en PC.",
+    "category": "Ajustes Esenciales",
+    "panel": "1",
+    "registry": [
+      {
+        "Path": "HKLM:\\System\\CurrentControlSet\\Control\\Session Manager\\Power",
+        "Name": "HibernateEnabled",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "1"
+      },
+      {
+        "Path": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FlyoutMenuSettings",
+        "Name": "ShowHibernateOption",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "1"
+      }
+    ],
+    "InvokeScript": [
+      "powercfg.exe /hibernate off"
+    ],
+    "UndoScript": [
+      "powercfg.exe /hibernate on"
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/essential-tweaks/hiber"
+  },
+  "WPFTweaksWidget": {
+    "Content": "Widgets - Eliminar",
+    "Description": "Elimina los molestos widgets en la parte inferior izquierda de la barra de tareas.",
+    "category": "Ajustes Esenciales",
+    "panel": "1",
+    "InvokeScript": [
+      "
+      # Sometimes if you dont stop the Widgets process the removal may fail
+
+      Get-Process *Widget* | Stop-Process
+      Get-AppxPackage Microsoft.WidgetsPlatformRuntime -AllUsers | Remove-AppxPackage -AllUsers
+      Get-AppxPackage MicrosoftWindows.Client.WebExperience -AllUsers | Remove-AppxPackage -AllUsers
+
+      Invoke-WinUtilExplorerUpdate -action \"restart\"
+      Write-Host \"Removed widgets\"
+      "
+    ],
+    "UndoScript": [
+      "
+      Write-Host \"Restoring widgets AppxPackages\"
+
+      Add-AppxPackage -Register \"C:\\Program Files\\WindowsApps\\Microsoft.WidgetsPlatformRuntime*\\AppxManifest.xml\" -DisableDevelopmentMode
+      Add-AppxPackage -Register \"C:\\Program Files\\WindowsApps\\MicrosoftWindows.Client.WebExperience*\\AppxManifest.xml\" -DisableDevelopmentMode
+
+      Invoke-WinUtilExplorerUpdate -action \"restart\"
+      "
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/essential-tweaks/widget"
+  },
+  "WPFTweaksRevertStartMenu": {
+    "Content": "Diseño Anterior del Menú Inicio - Activar",
+    "Description": "Restaura el diseño anterior del Menú Inicio, previo al lanzamiento gradual del nuevo en la 25H2.",
+    "category": "Ajustes Esenciales",
+    "panel": "1",
+    "InvokeScript": [
+      "
+      Invoke-WebRequest https://github.com/thebookisclosed/ViVe/releases/download/v0.3.4/ViVeTool-v0.3.4-IntelAmd.zip -OutFile ViVeTool.zip
+
+      Expand-Archive ViVeTool.zip
+      Remove-Item ViVeTool.zip
+
+      Start-Process 'ViVeTool\\ViVeTool.exe' -ArgumentList '/disable /id:47205210' -Wait -NoNewWindow
+
+      Remove-Item ViVeTool -Recurse
+
+      Write-Host 'Old start menu reverted. Please restart your computer to take effect.'
+      "
+    ],
+    "UndoScript": [
+      "
+      Invoke-WebRequest https://github.com/thebookisclosed/ViVe/releases/download/v0.3.4/ViVeTool-v0.3.4-IntelAmd.zip -OutFile ViVeTool.zip
+
+      Expand-Archive ViVeTool.zip
+      Remove-Item ViVeTool.zip
+
+      Start-Process 'ViVeTool\\ViVeTool.exe' -ArgumentList '/enable /id:47205210' -Wait -NoNewWindow
+
+      Remove-Item ViVeTool -Recurse
+
+      Write-Host 'New start menu reverted. Please restart your computer to take effect.'
+      "
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/essential-tweaks/revertstartmenu"
+  },
+  "WPFTweaksDisableStoreSearch": {
+    "Content": "Resultados de Búsqueda Recomendados de Microsoft Store - Desactivar",
+    "Description": "No mostrará aplicaciones recomendadas de la Microsoft Store al buscar aplicaciones en el menú Inicio.",
+    "category": "Ajustes Esenciales",
+    "panel": "1",
+    "InvokeScript": [
+      "icacls \"$Env:LocalAppData\\Packages\\Microsoft.WindowsStore_8wekyb3d8bbwe\\LocalState\\store.db\" /deny Everyone:F"
+    ],
+    "UndoScript": [
+      "icacls \"$Env:LocalAppData\\Packages\\Microsoft.WindowsStore_8wekyb3d8bbwe\\LocalState\\store.db\" /grant Everyone:F"
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/essential-tweaks/disablestoresearch"
+  },
+  "WPFTweaksLocation": {
+    "Content": "Rastreo de Ubicación - Desactivar",
+    "Description": "Desactiva el rastreo de ubicación.",
+    "category": "Ajustes Esenciales",
+    "panel": "1",
+    "service": [
+      {
+        "Name": "lfsvc",
+        "StartupType": "Disable",
+        "OriginalType": "Manual"
+      }
+    ],
+    "registry": [
+      {
+        "Path": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\CapabilityAccessManager\\ConsentStore\\location",
+        "Name": "Value",
+        "Value": "Deny",
+        "Type": "String",
+        "OriginalValue": "Allow"
+      },
+      {
+        "Path": "HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Sensor\\Overrides\\{BFA794E4-F964-4FDB-90F6-51056BFE4B44}",
+        "Name": "SensorPermissionState",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "1"
+      },
+      {
+        "Path": "HKLM:\\SYSTEM\\Maps",
+        "Name": "AutoUpdateEnabled",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "1"
+      }
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/essential-tweaks/location"
+  },
+  "WPFTweaksServices": {
+    "Content": "Servicios - Establecer en Manual",
+    "Description": "Establece algunos servicios en inicio Manual y ajusta el valor del registro SvcHostSplitThresholdInKB para coincidir mejor con la memoria del sistema, reduciendo los procesos svchost.exe.",
+    "category": "Ajustes Esenciales",
+    "panel": "1",
+    "service": [
+      {
+        "Name": "CscService",
+        "StartupType": "Disabled",
+        "OriginalType": "Manual"
+      },
+      {
+        "Name": "DiagTrack",
+        "StartupType": "Disabled",
+        "OriginalType": "Automatic"
+      },
+      {
+        "Name": "MapsBroker",
+        "StartupType": "Manual",
+        "OriginalType": "Automatic"
+      },
+      {
+        "Name": "StorSvc",
+        "StartupType": "Manual",
+        "OriginalType": "Automatic"
+      },
+      {
+        "Name": "SharedAccess",
+        "StartupType": "Disabled",
+        "OriginalType": "Automatic"
+      }
+    ],
+    "InvokeScript": [
+      "
+      $Memory = (Get-CimInstance Win32_PhysicalMemory | Measure-Object Capacity -Sum).Sum / 1KB
+      Set-ItemProperty -Path \"HKLM:\\SYSTEM\\CurrentControlSet\\Control\" -Name SvcHostSplitThresholdInKB -Value $Memory
+      "
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/essential-tweaks/services"
+  },
+  "WPFTweaksBraveDebloat": {
+    "Content": "Navegador Brave - Optimizar (Debloat)",
+    "Description": "Desactiva varias molestias como Brave Rewards, Leo AI, Crypto Wallet y VPN.",
+    "category": "z__Ajustes Avanzados - PRECAUCIÓN",
+    "panel": "1",
+    "registry": [
+      {
+        "Path": "HKLM:\\SOFTWARE\\Policies\\BraveSoftware\\Brave",
+        "Name": "BraveRewardsDisabled",
+        "Value": "1",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKLM:\\SOFTWARE\\Policies\\BraveSoftware\\Brave",
+        "Name": "BraveWalletDisabled",
+        "Value": "1",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKLM:\\SOFTWARE\\Policies\\BraveSoftware\\Brave",
+        "Name": "BraveVPNDisabled",
+        "Value": "1",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKLM:\\SOFTWARE\\Policies\\BraveSoftware\\Brave",
+        "Name": "BraveAIChatEnabled",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKLM:\\SOFTWARE\\Policies\\BraveSoftware\\Brave",
+        "Name": "BraveStatsPingEnabled",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKLM:\\SOFTWARE\\Policies\\BraveSoftware\\Brave",
+        "Name": "BraveNewsDisabled",
+        "Value": "1",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKLM:\\SOFTWARE\\Policies\\BraveSoftware\\Brave",
+        "Name": "BraveTalkDisabled",
+        "Value": "1",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKLM:\\SOFTWARE\\Policies\\BraveSoftware\\Brave",
+        "Name": "TorDisabled",
+        "Value": "1",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKLM:\\SOFTWARE\\Policies\\BraveSoftware\\Brave",
+        "Name": "BraveP3AEnabled",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKLM:\\SOFTWARE\\Policies\\BraveSoftware\\Brave",
+        "Name": "UrlKeyedAnonymizedDataCollectionEnabled",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKLM:\\SOFTWARE\\Policies\\BraveSoftware\\Brave",
+        "Name": "SafeBrowsingExtendedReportingEnabled",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKLM:\\SOFTWARE\\Policies\\BraveSoftware\\Brave",
+        "Name": "MetricsReportingEnabled",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      }
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/z--advanced-tweaks---caution/bravedebloat"
+  },
+  "WPFTweaksDisableWarningForUnsignedRdp": {
+    "Content": "Advertencias de Archivos RDP No Firmados - Desactivar",
+    "Description": "Desactiva las advertencias al iniciar archivos RDP no firmados, introducidas en las últimas actualizaciones de Windows 10 y 11.",
+    "category": "z__Ajustes Avanzados - PRECAUCIÓN",
+    "panel": "1",
+    "registry": [
+      {
+        "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows NT\\Terminal Services\\Client",
+        "Name": "RedirectionWarningDialogVersion",
+        "Value": "1",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKCU:\\SOFTWARE\\Microsoft\\Terminal Server Client",
+        "Name": "RdpLaunchConsentAccepted",
+        "Value": "1",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      }
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/z--advanced-tweaks---caution/disablewarningforunsignedrdp"
+  },
+  "WPFTweaksEdgeDebloat": {
+    "Content": "Microsoft Edge - Optimizar (Debloat)",
+    "Description": "Desactiva varias opciones de telemetría, ventanas emergentes y otras molestias en Edge.",
+    "category": "z__Ajustes Avanzados - PRECAUCIÓN",
+    "panel": "1",
+    "registry": [
+      {
+        "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\EdgeUpdate",
+        "Name": "CreateDesktopShortcutDefault",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Edge",
+        "Name": "PersonalizationReportingEnabled",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Edge\\ExtensionInstallBlocklist",
+        "Name": "1",
+        "Value": "ofefcgjbeghpigppfmkologfjadafddi",
+        "Type": "String",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Edge",
+        "Name": "ShowRecommendationsEnabled",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Edge",
+        "Name": "HideFirstRunExperience",
+        "Value": "1",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Edge",
+        "Name": "UserFeedbackAllowed",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Edge",
+        "Name": "ConfigureDoNotTrack",
+        "Value": "1",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Edge",
+        "Name": "AlternateErrorPagesEnabled",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Edge",
+        "Name": "EdgeCollectionsEnabled",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Edge",
+        "Name": "EdgeShoppingAssistantEnabled",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Edge",
+        "Name": "MicrosoftEdgeInsiderPromotionEnabled",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Edge",
+        "Name": "ShowMicrosoftRewards",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Edge",
+        "Name": "WebWidgetAllowed",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Edge",
+        "Name": "DiagnosticData",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Edge",
+        "Name": "EdgeAssetDeliveryServiceEnabled",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Edge",
+        "Name": "WalletDonationEnabled",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Edge",
+        "Name": "DefaultBrowserSettingsCampaignEnabled",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      }
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/z--advanced-tweaks---caution/edgedebloat"
+  },
+  "WPFTweaksConsumerFeatures": {
+    "Content": "Características de Consumidor - Desactivar",
+    "Description": "Windows no instalará automáticamente juegos, aplicaciones de terceros ni enlaces de la Tienda. Algunas apps predeterminadas serán inaccesibles.",
+    "category": "Ajustes Esenciales",
+    "panel": "1",
+    "registry": [
+      {
+        "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\CloudContent",
+        "Name": "DisableWindowsConsumerFeatures",
+        "Value": "1",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      }
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/essential-tweaks/consumerfeatures"
+  },
+  "WPFTweaksTelemetry": {
+    "Content": "Telemetría - Desactivar",
+    "Description": "Desactiva la telemetría de Microsoft.",
+    "category": "Ajustes Esenciales",
+    "panel": "1",
+    "registry": [
+      {
+        "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\AdvertisingInfo",
+        "Name": "Enabled",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Privacy",
+        "Name": "TailoredExperiencesWithDiagnosticDataEnabled",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKCU:\\Software\\Microsoft\\Speech_OneCore\\Settings\\OnlineSpeechPrivacy",
+        "Name": "HasAccepted",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKCU:\\Software\\Microsoft\\Input\\TIPC",
+        "Name": "Enabled",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKCU:\\Software\\Microsoft\\InputPersonalization",
+        "Name": "RestrictImplicitInkCollection",
+        "Value": "1",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKCU:\\Software\\Microsoft\\InputPersonalization",
+        "Name": "RestrictImplicitTextCollection",
+        "Value": "1",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKCU:\\Software\\Microsoft\\InputPersonalization\\TrainedDataStore",
+        "Name": "HarvestContacts",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKCU:\\Software\\Microsoft\\Personalization\\Settings",
+        "Name": "AcceptedPrivacyPolicy",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\DataCollection",
+        "Name": "AllowTelemetry",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+        "Name": "Start_TrackProgs",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\System",
+        "Name": "PublishUserActivities",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKCU:\\Software\\Microsoft\\Siuf\\Rules",
+        "Name": "NumberOfSIUFInPeriod",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      }
+    ],
+    "InvokeScript": [
+      "
+      # Disable Defender Auto Sample Submission
+      Set-MpPreference -SubmitSamplesConsent 2
+
+      # Disable (Connected User Experiences and Telemetry) Service
+      Set-Service -Name diagtrack -StartupType Disabled
+
+      # Disable (Windows Error Reporting Manager) Service
+      Set-Service -Name wermgr -StartupType Disabled
+
+      Remove-ItemProperty -Path \"HKCU:\\Software\\Microsoft\\Siuf\\Rules\" -Name PeriodInNanoSeconds
+      "
+    ],
+    "UndoScript": [
+      "
+      # Enable Defender Auto Sample Submission
+      Set-MpPreference -SubmitSamplesConsent 1
+
+      # Enable (Connected User Experiences and Telemetry) Service
+      Set-Service -Name diagtrack -StartupType Automatic
+
+      # Enable (Windows Error Reporting Manager) Service
+      Set-Service -Name wermgr -StartupType Automatic
+      "
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/essential-tweaks/telemetry"
+  },
+  "WPFTweaksRemoveEdge": {
+    "Content": "Microsoft Edge - Eliminar",
+    "Description": "Desbloquea las restricciones del desinstalador de Microsoft Edge y luego lo usa para eliminarlo.",
+    "category": "z__Ajustes Avanzados - PRECAUCIÓN",
+    "panel": "1",
+    "InvokeScript": [
+      "Invoke-WinUtilRemoveEdge"
+    ],
+    "UndoScript": [
+      "
+      Write-Host 'Installing Microsoft Edge...'
+      winget install Microsoft.Edge --source winget
+      "
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/z--advanced-tweaks---caution/removeedge"
+  },
+  "WPFTweaksUTC": {
+    "Content": "Fecha y Hora - Establecer hora en UTC",
+    "Description": "Esencial para computadoras con arranque dual (dual boot). Arregla la sincronización de tiempo con sistemas Linux.",
+    "category": "z__Ajustes Avanzados - PRECAUCIÓN",
+    "panel": "1",
+    "registry": [
+      {
+        "Path": "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\TimeZoneInformation",
+        "Name": "RealTimeIsUniversal",
+        "Value": "1",
+        "Type": "QWord",
+        "OriginalValue": "0"
+      }
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/z--advanced-tweaks---caution/utc"
+  },
+  "WPFTweaksRemoveOneDrive": {
+    "Content": "Microsoft OneDrive - Eliminar",
+    "Description": "Deniega permisos para eliminar archivos de usuario de OneDrive, usa su desinstalador para eliminarlo y restaura los permisos después.",
+    "category": "z__Ajustes Avanzados - PRECAUCIÓN",
+    "panel": "1",
+    "InvokeScript": [
+      "
+      # Deny permission to remove OneDrive folder
+      icacls $Env:OneDrive /deny \"Administrators:(D,DC)\"
+
+      Write-Host \"Uninstalling OneDrive...\"
+      Start-Process 'C:\\Windows\\System32\\OneDriveSetup.exe' -ArgumentList '/uninstall' -Wait
+
+      # Some of OneDrive files use explorer, and OneDrive uses FileCoAuth
+      Write-Host \"Removing leftover OneDrive Files...\"
+      Stop-Process -Name FileCoAuth,Explorer
+      Remove-Item \"$Env:LocalAppData\\Microsoft\\OneDrive\" -Recurse -Force
+      Remove-Item \"C:\\ProgramData\\Microsoft OneDrive\" -Recurse -Force
+
+      # Grant back permission to access OneDrive folder
+      icacls $Env:OneDrive /grant \"Administrators:(D,DC)\"
+
+      # Disable OneSyncSvc
+      Set-Service -Name OneSyncSvc -StartupType Disabled
+      "
+    ],
+    "UndoScript": [
+      "
+      Write-Host \"Installing OneDrive\"
+      winget install Microsoft.Onedrive --source winget
+
+      # Enabled OneSyncSvc
+      Set-Service -Name OneSyncSvc -StartupType Automatic
+      "
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/z--advanced-tweaks---caution/removeonedrive"
+  },
+  "WPFTweaksRemoveHome": {
+    "Content": "Inicio y Galería del Explorador de Archivos - Desactivar",
+    "Description": "Elimina el Inicio y la Galería del Explorador y establece 'Este equipo' por defecto.",
+    "category": "z__Ajustes Avanzados - PRECAUCIÓN",
+    "panel": "1",
+    "registry": [
+      {
+        "Path": "HKCU:\\Software\\Classes\\CLSID\\{f874310e-b6b7-47dc-bc84-b9e6b38f5903}",
+        "Name": "System.IsPinnedToNameSpaceTree",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+        "Name": "LaunchTo",
+        "Value": "1",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      }
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/z--advanced-tweaks---caution/removehome"
+  },
+  "WPFTweaksDisplay": {
+    "Content": "Efectos Visuales - Establecer en Mejor Rendimiento",
+    "Description": "Establece las preferencias del sistema en rendimiento. También puedes hacerlo manualmente con sysdm.cpl.",
+    "category": "z__Ajustes Avanzados - PRECAUCIÓN",
+    "panel": "1",
+    "registry": [
+      {
+        "Path": "HKCU:\\Control Panel\\Desktop",
+        "Name": "DragFullWindows",
+        "Value": "0",
+        "Type": "String",
+        "OriginalValue": "1"
+      },
+      {
+        "Path": "HKCU:\\Control Panel\\Desktop",
+        "Name": "MenuShowDelay",
+        "Value": "200",
+        "Type": "String",
+        "OriginalValue": "400"
+      },
+      {
+        "Path": "HKCU:\\Control Panel\\Desktop\\WindowMetrics",
+        "Name": "MinAnimate",
+        "Value": "0",
+        "Type": "String",
+        "OriginalValue": "1"
+      },
+      {
+        "Path": "HKCU:\\Control Panel\\Keyboard",
+        "Name": "KeyboardDelay",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "1"
+      },
+      {
+        "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+        "Name": "ListviewAlphaSelect",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "1"
+      },
+      {
+        "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+        "Name": "ListviewShadow",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "1"
+      },
+      {
+        "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+        "Name": "TaskbarAnimations",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "1"
+      },
+      {
+        "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\VisualEffects",
+        "Name": "VisualFXSetting",
+        "Value": "3",
+        "Type": "DWord",
+        "OriginalValue": "1"
+      },
+      {
+        "Path": "HKCU:\\Software\\Microsoft\\Windows\\DWM",
+        "Name": "EnableAeroPeek",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "1"
+      },
+      {
+        "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+        "Name": "TaskbarMn",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "1"
+      },
+      {
+        "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+        "Name": "ShowTaskViewButton",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "1"
+      },
+      {
+        "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Search",
+        "Name": "SearchboxTaskbarMode",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "1"
+      }
+    ],
+    "InvokeScript": [
+      "Set-ItemProperty -Path \"HKCU:\\Control Panel\\Desktop\" -Name \"UserPreferencesMask\" -Type Binary -Value ([byte[]](144,18,3,128,16,0,0,0))"
+    ],
+    "UndoScript": [
+      "Remove-ItemProperty -Path \"HKCU:\\Control Panel\\Desktop\" -Name \"UserPreferencesMask\""
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/z--advanced-tweaks---caution/display"
+  },
+  "WPFTweaksXboxRemoval": {
+    "Content": "Componentes de Xbox y Juegos - Eliminar",
+    "Description": "Elimina los servicios de Xbox, la app de Xbox, Game Bar y los componentes de autenticación relacionados.",
+    "category": "z__Ajustes Avanzados - PRECAUCIÓN",
+    "panel": "1",
+    "registry": [
+      {
+        "Path": "HKCU:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\GameDVR",
+        "Name": "AppCaptureEnabled",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "1"
+      }
+    ],
+    "appx": [
+      "Microsoft.XboxIdentityProvider",
+      "Microsoft.XboxSpeechToTextOverlay",
+      "Microsoft.GamingApp",
+      "Microsoft.Xbox.TCUI",
+      "Microsoft.XboxGamingOverlay"
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/z--advanced-tweaks---caution/xboxremoval"
+  },
+  "WPFTweaksDeBloat": {
+    "Content": "Aplicaciones Preinstaladas No Deseadas - Eliminar",
+    "Description": "Esto eliminará un montón de aplicaciones preinstaladas de Windows que la mayoría de la gente no quiere en su sistema.",
+    "category": "Ajustes Esenciales",
+    "panel": "1",
+    "appx": [
+      "Microsoft.WindowsFeedbackHub",
+      "Microsoft.BingNews",
+      "Microsoft.BingSearch",
+      "Microsoft.BingWeather",
+      "Clipchamp.Clipchamp",
+      "Microsoft.Todos",
+      "Microsoft.PowerAutomateDesktop",
+      "Microsoft.MicrosoftSolitaireCollection",
+      "Microsoft.WindowsSoundRecorder",
+      "Microsoft.MicrosoftStickyNotes",
+      "Microsoft.Windows.DevHome",
+      "Microsoft.Paint",
+      "Microsoft.OutlookForWindows",
+      "Microsoft.WindowsAlarms",
+      "Microsoft.StartExperiencesApp",
+      "Microsoft.GetHelp",
+      "Microsoft.ZuneMusic",
+      "MicrosoftCorporationII.QuickAssist",
+      "MSTeams"
+    ],
+    "InvokeScript": [
+      "
+      $TeamsPath = \"$Env:LocalAppData\\Microsoft\\Teams\\Update.exe\"
+
+      if (Test-Path $TeamsPath) {
+        Write-Host \"Uninstalling Teams\"
+        Start-Process $TeamsPath -ArgumentList -uninstall -wait
+
+        Write-Host \"Deleting Teams directory\"
+        Remove-Item $TeamsPath -Recurse -Force
+      }
+      "
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/essential-tweaks/debloat"
+  },
+  "WPFTweaksRestorePoint": {
+    "Content": "Punto de Restauración - Crear",
+    "Description": "Crea un punto de restauración en tiempo de ejecución en caso de que sea necesario revertir las modificaciones de WinUtil.",
+    "category": "Ajustes Esenciales",
+    "panel": "1",
+    "Checked": "False",
+    "registry": [
+      {
+        "Path": "HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\SystemRestore",
+        "Name": "SystemRestorePointCreationFrequency",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "1440"
+      }
+    ],
+    "InvokeScript": [
+      "
+      if (-not (Get-ComputerRestorePoint)) {
+          Enable-ComputerRestore -Drive $Env:SystemDrive
+      }
+
+      Checkpoint-Computer -Description \"System Restore Point created by WinUtil\" -RestorePointType MODIFY_SETTINGS
+      Write-Host \"System Restore Point Created Successfully\" -ForegroundColor Green
+      "
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/essential-tweaks/restorepoint"
+  },
+  "WPFTweaksEndTaskOnTaskbar": {
+    "Content": "Finalizar Tarea con Clic Derecho - Activar",
+    "Description": "Habilita la opción de finalizar tarea al hacer clic derecho en un programa en la barra de tareas.",
+    "category": "Ajustes Esenciales",
+    "panel": "1",
+    "registry": [
+      {
+        "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced\\TaskbarDeveloperSettings",
+        "Name": "TaskbarEndTask",
+        "Value": "1",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      }
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/essential-tweaks/endtaskontaskbar"
+  },
+  "WPFTweaksPowershell7Tele": {
+    "Content": "Telemetría de PowerShell 7 - Desactivar",
+    "Description": "Crea una variable de entorno 'POWERSHELL_TELEMETRY_OPTOUT' con valor '1' para evitar que PowerShell 7 envíe datos de telemetría.",
+    "category": "Ajustes Esenciales",
+    "panel": "1",
+    "InvokeScript": [
+      "[Environment]::SetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', '1', 'Machine')"
+    ],
+    "UndoScript": [
+      "[Environment]::SetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', '', 'Machine')"
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/essential-tweaks/powershell7tele"
+  },
+  "WPFTweaksStorage": {
+    "Content": "Sensor de Almacenamiento - Desactivar",
+    "Description": "El Sensor de Almacenamiento elimina archivos temporales automáticamente.",
+    "category": "z__Ajustes Avanzados - PRECAUCIÓN",
+    "panel": "1",
+    "registry": [
+      {
+        "Path": "HKCU:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\StorageSense\\Parameters\\StoragePolicy",
+        "Name": "01",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "1"
+      }
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/z--advanced-tweaks---caution/storage"
+  },
+  "WPFTweaksWindowsAI": {
+    "Content": "IA de Windows - Desactivar",
+    "Description": "Elimina o desactiva todas las funciones y paquetes de IA.",
+    "category": "z__Ajustes Avanzados - PRECAUCIÓN",
+    "panel": "1",
+    "registry": [
+      {
+        "Path": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer",
+        "Name": "SettingsPageVisibility",
+        "Value": "hide:aicomponents",
+        "Type": "String",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKLM:\\SOFTWARE\\Policies\\WindowsNotepad",
+        "Name": "DisableAIFeatures",
+        "Value": 1,
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      }
+    ],
+    "InvokeScript": [
+      "
+      $Appx = (Get-AppxPackage MicrosoftWindows.Client.CoreAI).PackageFullName
+      $Sid = (Get-LocalUser $Env:UserName).Sid.Value
+
+      New-Item \"HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Appx\\AppxAllUserStore\\EndOfLife\\$Sid\\$Appx\" -Force
+
+      Get-AppxPackage -AllUsers *Copilot* | Remove-AppxPackage -AllUsers
+      Get-AppxPackage -AllUsers Microsoft.MicrosoftOfficeHub | Remove-AppxPackage -AllUsers
+      Remove-AppxPackage $Appx
+
+      Set-Service -Name WSAIFabricSvc -StartupType Disabled
+      Disable-WindowsOptionalFeature -FeatureName Recall -Online
+
+      Write-Host \"Windows AI Disabled\"
+      "
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/z--advanced-tweaks---caution/windowsai"
+  },
+  "WPFTweaksWPBT": {
+    "Content": "Windows Platform Binary Table (WPBT) - Desactivar",
+    "Description": "Si está habilitado, WPBT permite al fabricante ejecutar programas en el arranque (antirrobo, controladores) e instalar software sin consentimiento del usuario. Riesgo de seguridad.",
+    "category": "Ajustes Esenciales",
+    "panel": "1",
+    "registry": [
+      {
+        "Path": "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Session Manager",
+        "Name": "DisableWpbtExecution",
+        "Value": "1",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      }
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/essential-tweaks/wpbt"
+  },
+  "WPFTweaksRazerBlock": {
+    "Content": "Auto-Instalador de Software Razer - Desactivar",
+    "Description": "Bloquea TODAS las instalaciones de software Razer. El hardware funciona bien sin ningún software.",
+    "category": "z__Ajustes Avanzados - PRECAUCIÓN",
+    "panel": "1",
+    "registry": [
+      {
+        "Path": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\DriverSearching",
+        "Name": "SearchOrderConfig",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "1"
+      },
+      {
+        "Path": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Device Installer",
+        "Name": "DisableCoInstallers",
+        "Value": "1",
+        "Type": "DWord",
+        "OriginalValue": "0"
+      }
+    ],
+    "InvokeScript": [
+      "
+      $RazerPath = \"C:\\Windows\\Installer\\Razer\"
+
+      if (Test-Path $RazerPath) {
+        Remove-Item $RazerPath\\* -Recurse -Force
+      } else {
+        New-Item -Path $RazerPath -ItemType Directory
+      }
+
+      icacls $RazerPath /deny \"Everyone:(W)\"
+      "
+    ],
+    "UndoScript": [
+      "
+      icacls \"C:\\Windows\\Installer\\Razer\" /remove:d Everyone
+      "
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/z--advanced-tweaks---caution/razerblock"
+  },
+  "WPFTweaksDisableNotifications": {
+    "Content": "Notificaciones de Bandeja de Sistema y Calendario - Desactivar",
+    "Description": "Desactiva todas las notificaciones INCLUYENDO el Calendario.",
+    "category": "z__Ajustes Avanzados - PRECAUCIÓN",
+    "panel": "1",
+    "registry": [
+      {
+        "Path": "HKCU:\\Software\\Policies\\Microsoft\\Windows\\Explorer",
+        "Name": "DisableNotificationCenter",
+        "Value": "1",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>"
+      },
+      {
+        "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\PushNotifications",
+        "Name": "ToastEnabled",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "1"
+      }
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/z--advanced-tweaks---caution/disablenotifications"
+  },
+  "WPFTweaksBlockAdobeNet": {
+    "Content": "Lista de Bloqueo de URLs de Adobe - Activar",
+    "Description": "Reduce interrupciones del usuario bloqueando selectivamente conexiones a servidores de activación y telemetría de Adobe. Crédito: Ruddernation-Designs",
+    "category": "z__Ajustes Avanzados - PRECAUCIÓN",
+    "panel": "1",
+    "InvokeScript": [
+      "
+      $hostsUrl = \"https://github.com/Ruddernation-Designs/Adobe-URL-Block-List/raw/refs/heads/master/hosts\"
+      $hosts = \"$Env:SystemRoot\\System32\\drivers\\etc\\hosts\"
+
+      Move-Item $hosts \"$hosts.bak\"
+      Invoke-WebRequest $hostsUrl -OutFile $hosts
+      ipconfig /flushdns
+
+      Write-Host \"Added Adobe url block list from host file\"
+      "
+    ],
+    "UndoScript": [
+      "
+      $hosts = \"$Env:SystemRoot\\System32\\drivers\\etc\\hosts\"
+
+      Remove-Item $hosts
+      Move-Item \"$hosts.bak\" $hosts
+      ipconfig /flushdns
+
+      Write-Host \"Removed Adobe url block list from host file\"
+      "
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/z--advanced-tweaks---caution/blockadobenet"
+  },
+  "WPFTweaksRightClickMenu": {
+    "Content": "Diseño Anterior de Menú de Clic Derecho - Activar",
+    "Description": "Restaura el menú contextual clásico al hacer clic derecho en el Explorador de Archivos, reemplazando la versión simplificada de Windows 11.",
+    "category": "z__Ajustes Avanzados - PRECAUCIÓN",
+    "panel": "1",
+    "InvokeScript": [
+      "
+      New-Item -Path \"HKCU:\\Software\\Classes\\CLSID\\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\" -Name \"InprocServer32\" -force -value \"\"
+      Write-Host Restarting explorer.exe ...
+      Stop-Process -Name \"explorer\" -Force
+      "
+    ],
+    "UndoScript": [
+      "
+      Remove-Item -Path \"HKCU:\\Software\\Classes\\CLSID\\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\" -Recurse -Confirm:$false -Force
+      # Restarting Explorer in the Undo Script might not be necessary, as the Registry change without restarting Explorer does work, but just to make sure.
+      Write-Host Restarting explorer.exe ...
+      Stop-Process -Name \"explorer\" -Force
+      "
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/z--advanced-tweaks---caution/rightclickmenu"
+  },
+  "WPFTweaksDiskCleanup": {
+    "Content": "Liberador de Espacio en Disco - Ejecutar",
+    "Description": "Ejecuta el Liberador de Espacio en Disco en la unidad C: y elimina antiguas actualizaciones de Windows.",
+    "category": "Ajustes Esenciales",
+    "panel": "1",
+    "InvokeScript": [
+      "
+      cleanmgr.exe /d C: /VERYLOWDISK
+      Dism.exe /online /Cleanup-Image /StartComponentCleanup /ResetBase
+      "
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/essential-tweaks/diskcleanup"
+  },
+  "WPFTweaksDeleteTempFiles": {
+    "Content": "Archivos Temporales - Eliminar",
+    "Description": "Borra las carpetas TEMP.",
+    "category": "Ajustes Esenciales",
+    "panel": "1",
+    "InvokeScript": [
+      "
+      Remove-Item -Path \"$Env:Temp\\*\" -Recurse -Force
+      Remove-Item -Path \"$Env:SystemRoot\\Temp\\*\" -Recurse -Force
+      "
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/essential-tweaks/deletetempfiles"
+  },
+  "WPFTweaksIPv46": {
+    "Content": "IPv6 - Establecer IPv4 como Preferido",
+    "Description": "Dar preferencia a IPv4 puede tener beneficios de latencia y seguridad en redes privadas donde IPv6 no está configurado.",
+    "category": "z__Ajustes Avanzados - PRECAUCIÓN",
+    "panel": "1",
+    "registry": [
+      {
+        "Path": "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip6\\Parameters",
+        "Name": "DisabledComponents",
+        "Value": "32",
+        "Type": "DWord",
+        "OriginalValue": "0"
+      }
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/z--advanced-tweaks---caution/ipv46"
+  },
+  "WPFTweaksTeredo": {
+    "Content": "Teredo - Desactivar",
+    "Description": "Teredo network tunneling es una función IPv6 que puede causar latencia adicional, pero desactivarlo puede causar problemas con algunos juegos.",
+    "category": "z__Ajustes Avanzados - PRECAUCIÓN",
+    "panel": "1",
+    "registry": [
+      {
+        "Path": "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip6\\Parameters",
+        "Name": "DisabledComponents",
+        "Value": "1",
+        "Type": "DWord",
+        "OriginalValue": "0"
+      }
+    ],
+    "InvokeScript": [
+      "netsh interface teredo set state disabled"
+    ],
+    "UndoScript": [
+      "netsh interface teredo set state default"
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/z--advanced-tweaks---caution/teredo"
+  },
+  "WPFTweaksDisableIPv6": {
+    "Content": "IPv6 - Desactivar",
+    "Description": "Desactiva IPv6.",
+    "category": "z__Ajustes Avanzados - PRECAUCIÓN",
+    "panel": "1",
+    "registry": [
+      {
+        "Path": "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip6\\Parameters",
+        "Name": "DisabledComponents",
+        "Value": "255",
+        "Type": "DWord",
+        "OriginalValue": "0"
+      }
+    ],
+    "InvokeScript": [
+      "Disable-NetAdapterBinding -Name * -ComponentID ms_tcpip6"
+    ],
+    "UndoScript": [
+      "Enable-NetAdapterBinding -Name * -ComponentID ms_tcpip6"
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/z--advanced-tweaks---caution/disableipv6"
+  },
+  "WPFTweaksDisableBGapps": {
+    "Content": "Aplicaciones en Segundo Plano - Desactivar",
+    "Description": "Desactiva la ejecución en segundo plano de todas las aplicaciones de la Tienda de Microsoft.",
+    "category": "z__Ajustes Avanzados - PRECAUCIÓN",
+    "panel": "1",
+    "registry": [
+      {
+        "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\BackgroundAccessApplications",
+        "Name": "GlobalUserDisabled",
+        "Value": "1",
+        "Type": "DWord",
+        "OriginalValue": "0"
+      }
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/z--advanced-tweaks---caution/disablebgapps"
+  },
+  "WPFTweaksDisableFSO": {
+    "Content": "Optimizaciones de Pantalla Completa - Desactivar",
+    "Description": "Desactiva FSO en todas las aplicaciones. NOTA: Esto desactivará la gestión de color en pantalla completa exclusiva.",
+    "category": "z__Ajustes Avanzados - PRECAUCIÓN",
+    "panel": "1",
+    "registry": [
+      {
+        "Path": "HKCU:\\System\\GameConfigStore",
+        "Name": "GameDVR_DXGIHonorFSEWindowsCompatible",
+        "Value": "1",
+        "Type": "DWord",
+        "OriginalValue": "0"
+      }
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/z--advanced-tweaks---caution/disablefso"
+  },
+  "WPFToggleDisableCrossDeviceResume": {
+    "Content": "Reanudación Entre Dispositivos",
+    "Description": "Controla la función de Reanudación en Windows 11 24H2 y posteriores, que permite reanudar una actividad desde un dispositivo móvil y viceversa.",
+    "category": "Personalizar Preferencias",
+    "panel": "2",
+    "Type": "Toggle",
+    "registry": [
+      {
+        "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\CrossDeviceResume\\Configuration",
+        "Name": "IsResumeAllowed",
+        "Value": "1",
+        "Type": "DWord",
+        "OriginalValue": "0",
+        "DefaultState": "true"
+      }
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/customize-preferences/disablecrossdeviceresume"
+  },
+  "WPFToggleDetailedBSoD": {
+    "Content": "Modo Detallado BSoD (Pantalla Azul)",
+    "Description": "Si está habilitado, verás una Pantalla Azul de la Muerte (BSOD) detallada con más información.",
+    "category": "Personalizar Preferencias",
+    "panel": "2",
+    "Type": "Toggle",
+    "registry": [
+      {
+        "Path": "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\CrashControl",
+        "Name": "DisplayParameters",
+        "Value": "1",
+        "Type": "DWord",
+        "OriginalValue": "0",
+        "DefaultState": "false"
+      },
+      {
+        "Path": "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\CrashControl",
+        "Name": "DisableEmoticon",
+        "Value": "1",
+        "Type": "DWord",
+        "OriginalValue": "0",
+        "DefaultState": "false"
+      }
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/customize-preferences/detailedbsod"
+  },
+  "WPFToggleBatteryPercentage": {
+    "Content": "Porcentaje de Batería en Bandeja de Sistema",
+    "Description": "Si está habilitado, muestra el porcentaje numérico de batería junto al ícono en la bandeja del sistema.",
+    "category": "Personalizar Preferencias",
+    "panel": "2",
+    "Type": "Toggle",
+    "registry": [
+      {
+        "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+        "Name": "IsBatteryPercentageEnabled",
+        "Value": "1",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>",
+        "DefaultState": "false"
+      }
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/customize-preferences/batterypercentage"
+  },
+  "WPFToggleDarkMode": {
+    "Content": "Tema Oscuro para Windows",
+    "Description": "Activar/Desactivar Tema Oscuro.",
+    "category": "Personalizar Preferencias",
+    "panel": "2",
+    "Type": "Toggle",
+    "registry": [
+      {
+        "Path": "HKCU:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+        "Name": "AppsUseLightTheme",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "1",
+        "DefaultState": "false"
+      },
+      {
+        "Path": "HKCU:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+        "Name": "SystemUsesLightTheme",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "1",
+        "DefaultState": "false"
+      }
+    ],
+    "InvokeScript": [
+      "
+      Invoke-WinUtilExplorerUpdate
+      if ($sync.ThemeButton.Content -eq [char]0xF08C) {
+        Invoke-WinutilThemeChange -theme \"Auto\"
+      }
+      "
+    ],
+    "UndoScript": [
+      "
+      Invoke-WinUtilExplorerUpdate
+      if ($sync.ThemeButton.Content -eq [char]0xF08C) {
+        Invoke-WinutilThemeChange -theme \"Auto\"
+      }
+      "
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/customize-preferences/darkmode"
+  },
+  "WPFToggleShowExt": {
+    "Content": "Extensiones de Archivos del Explorador",
+    "Description": "Si está habilitado, las extensiones de archivos (ej. .txt, .jpg) serán visibles.",
+    "category": "Personalizar Preferencias",
+    "panel": "2",
+    "Type": "Toggle",
+    "registry": [
+      {
+        "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+        "Name": "HideFileExt",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "1",
+        "DefaultState": "false"
+      }
+    ],
+    "InvokeScript": [
+      "
+      Invoke-WinUtilExplorerUpdate -action \"restart\"
+      "
+    ],
+    "UndoScript": [
+      "
+      Invoke-WinUtilExplorerUpdate -action \"restart\"
+      "
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/customize-preferences/showext"
+  },
+  "WPFToggleHiddenFiles": {
+    "Content": "Archivos Ocultos del Explorador",
+    "Description": "Si está habilitado, se mostrarán los archivos ocultos.",
+    "category": "Personalizar Preferencias",
+    "panel": "2",
+    "Type": "Toggle",
+    "registry": [
+      {
+        "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+        "Name": "Hidden",
+        "Value": "1",
+        "Type": "DWord",
+        "OriginalValue": "0",
+        "DefaultState": "false"
+      }
+    ],
+    "InvokeScript": [
+      "
+      Invoke-WinUtilExplorerUpdate -action \"restart\"
+      "
+    ],
+    "UndoScript": [
+      "
+      Invoke-WinUtilExplorerUpdate -action \"restart\"
+      "
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/customize-preferences/hiddenfiles"
+  },
+  "WPFToggleVerboseLogon": {
+    "Content": "Modo de Inicio de Sesión Detallado",
+    "Description": "Muestra mensajes detallados durante el proceso de inicio de sesión para solución de problemas.",
+    "category": "Personalizar Preferencias",
+    "panel": "2",
+    "Type": "Toggle",
+    "registry": [
+      {
+        "Path": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
+        "Name": "VerboseStatus",
+        "Value": "1",
+        "Type": "DWord",
+        "OriginalValue": "0",
+        "DefaultState": "false"
+      }
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/customize-preferences/verboselogon"
+  },
+  "WPFToggleNewOutlook": {
+    "Content": "Microsoft Outlook Nueva Versión",
+    "Description": "Si está desactivado, elimina el interruptor del nuevo Outlook, desactiva la migración al nuevo Outlook y asegura que se use la aplicación clásica.",
+    "category": "Personalizar Preferencias",
+    "panel": "2",
+    "Type": "Toggle",
+    "registry": [
+      {
+        "Path": "HKCU:\\SOFTWARE\\Microsoft\\Office\\16.0\\Outlook\\Preferences",
+        "Name": "UseNewOutlook",
+        "Value": "1",
+        "Type": "DWord",
+        "OriginalValue": "0",
+        "DefaultState": "true"
+      },
+      {
+        "Path": "HKCU:\\Software\\Microsoft\\Office\\16.0\\Outlook\\Options\\General",
+        "Name": "HideNewOutlookToggle",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "1",
+        "DefaultState": "true"
+      },
+      {
+        "Path": "HKCU:\\Software\\Policies\\Microsoft\\Office\\16.0\\Outlook\\Options\\General",
+        "Name": "DoNewOutlookAutoMigration",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "0",
+        "DefaultState": "false"
+      },
+      {
+        "Path": "HKCU:\\Software\\Policies\\Microsoft\\Office\\16.0\\Outlook\\Preferences",
+        "Name": "NewOutlookMigrationUserSetting",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>",
+        "DefaultState": "true"
+      }
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/customize-preferences/newoutlook"
+  },
+    "WPFToggleScrollbars": {
+    "Content": "Barras de Desplazamiento Siempre Visibles",
+    "Description": "Si está habilitado, las barras de desplazamiento siempre estarán visibles. Si está deshabilitado, Windows las ocultará automáticamente cuando no se usen.",
+    "category": "Personalizar Preferencias",
+    "panel": "2",
+    "Type": "Toggle",
+    "registry": [
+      {
+        "Path": "HKCU:\\Control Panel\\Accessibility",
+        "Name": "DynamicScrollbars",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "1",
+        "DefaultState": "false",
+      "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/customize-preferences/scrollbars"
+      }
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/customize-preferences/scrollbars"
+  },
+  "WPFToggleMultiplaneOverlay": {
+    "Content": "Superposición Multiplano (Multiplane Overlay)",
+    "Description": "Activa o desactiva la Superposición Multiplano, que a veces puede causar problemas con tarjetas gráficas.",
+    "category": "Personalizar Preferencias",
+    "panel": "2",
+    "Type": "Toggle",
+    "registry": [
+      {
+        "Path": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\Dwm",
+        "Name": "OverlayTestMode",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "5",
+        "DefaultState": "true"
+      }
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/customize-preferences/multiplaneoverlay"
+  },
+  "WPFToggleMouseAcceleration": {
+    "Content": "Aceleración del Ratón",
+    "Description": "Si está habilitado, el movimiento del cursor se ve afectado por la velocidad de tus movimientos físicos con el ratón.",
+    "category": "Personalizar Preferencias",
+    "panel": "2",
+    "Type": "Toggle",
+    "registry": [
+      {
+        "Path": "HKCU:\\Control Panel\\Mouse",
+        "Name": "MouseSpeed",
+        "Value": "1",
+        "Type": "DWord",
+        "OriginalValue": "0",
+        "DefaultState": "true"
+      },
+      {
+        "Path": "HKCU:\\Control Panel\\Mouse",
+        "Name": "MouseThreshold1",
+        "Value": "6",
+        "Type": "DWord",
+        "OriginalValue": "0",
+        "DefaultState": "true"
+      },
+      {
+        "Path": "HKCU:\\Control Panel\\Mouse",
+        "Name": "MouseThreshold2",
+        "Value": "10",
+        "Type": "DWord",
+        "OriginalValue": "0",
+        "DefaultState": "true"
+      }
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/customize-preferences/mouseacceleration"
+  },
+  "WPFToggleNumLock": {
+    "Content": "Bloqueo Numérico al Iniciar",
+    "Description": "Alterna el estado de la tecla Bloqueo Numérico cuando tu computadora inicia.",
+    "category": "Personalizar Preferencias",
+    "panel": "2",
+    "Type": "Toggle",
+    "registry": [
+      {
+        "Path": "HKU:\\.Default\\Control Panel\\Keyboard",
+        "Name": "InitialKeyboardIndicators",
+        "Value": "2",
+        "Type": "String",
+        "OriginalValue": "0",
+        "DefaultState": "false"
+      },
+      {
+        "Path": "HKCU:\\Control Panel\\Keyboard",
+        "Name": "InitialKeyboardIndicators",
+        "Value": "2",
+        "Type": "String",
+        "OriginalValue": "0",
+        "DefaultState": "false"
+      }
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/customize-preferences/numlock"
+  },
+  "WPFToggleStandbyFix": {
+    "Content": "Conectividad de Red en Suspensión S0",
+    "Description": "Activa o desactiva la conectividad de red durante la suspensión S0.",
+    "category": "Personalizar Preferencias",
+    "panel": "2",
+    "Type": "Toggle",
+    "registry": [
+      {
+        "Path": "HKCU:\\SOFTWARE\\Policies\\Microsoft\\Power\\PowerSettings\\f15576e8-98b7-4186-b944-eafa664402d9",
+        "Name": "ACSettingIndex",
+        "Value": "1",
+        "Type": "DWord",
+        "OriginalValue": "0",
+        "DefaultState": "true"
+      }
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/customize-preferences/standbyfix"
+  },
+  "WPFToggleS3Sleep": {
+    "Content": "Suspensión S3",
+    "Description": "Alterna entre Modo de Espera Moderno y Suspensión S3.",
+    "category": "Personalizar Preferencias",
+    "panel": "2",
+    "Type": "Toggle",
+    "registry": [
+      {
+        "Path": "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Power",
+        "Name": "PlatformAoAcOverride",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "<RemoveEntry>",
+        "DefaultState": "false"
+      }
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/customize-preferences/s3sleep"
+  },
+  "WPFToggleHideSettingsHome": {
+    "Content": "Página de Inicio de Configuración",
+    "Description": "Activa o desactiva la Página de Inicio en la aplicación Configuración de Windows.",
+    "category": "Personalizar Preferencias",
+    "panel": "2",
+    "Type": "Toggle",
+    "registry": [
+      {
+        "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer",
+        "Name": "SettingsPageVisibility",
+        "Value": "show:home",
+        "Type": "String",
+        "OriginalValue": "hide:home",
+        "DefaultState": "true"
+      }
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/customize-preferences/hidesettingshome"
+  },
+  "WPFToggleBingSearch": {
+    "Content": "Búsqueda de Bing en Menú Inicio",
+    "Description": "Si está habilitado, los resultados de búsqueda web de Bing se incluirán en tu búsqueda del Menú Inicio.",
+    "category": "Personalizar Preferencias",
+    "panel": "2",
+    "Type": "Toggle",
+    "registry": [
+      {
+        "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Search",
+        "Name": "BingSearchEnabled",
+        "Value": "1",
+        "Type": "DWord",
+        "OriginalValue": "0",
+        "DefaultState": "true"
+      }
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/customize-preferences/bingsearch"
+  },
+  "WPFToggleLoginBlur": {
+    "Content": "Desenfoque Acrílico en Pantalla de Inicio de Sesión",
+    "Description": "Si está desactivado, el efecto de desenfoque acrílico se eliminará del fondo de la pantalla de inicio de sesión de Windows 10/11.",
+    "category": "Personalizar Preferencias",
+    "panel": "2",
+    "Type": "Toggle",
+    "registry": [
+      {
+        "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\System",
+        "Name": "DisableAcrylicBackgroundOnLogon",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "1",
+        "DefaultState": "true"
+      }
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/customize-preferences/loginblur"
+  },
+  "WPFToggleStartMenuRecommendations": {
+    "Content": "Recomendaciones del Menú Inicio",
+    "Description": "Si está desactivado, no verás recomendaciones en el Menú Inicio. ADVERTENCIA: Esto también desactivará Contenido Destacado de Windows (Spotlight) en tu Pantalla de Bloqueo.",
+    "category": "Personalizar Preferencias",
+    "panel": "2",
+    "Type": "Toggle",
+    "registry": [
+      {
+        "Path": "HKLM:\\SOFTWARE\\Microsoft\\PolicyManager\\current\\device\\Start",
+        "Name": "HideRecommendedSection",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "1",
+        "DefaultState": "true"
+      },
+      {
+        "Path": "HKLM:\\SOFTWARE\\Microsoft\\PolicyManager\\current\\device\\Education",
+        "Name": "IsEducationEnvironment",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "1",
+        "DefaultState": "true"
+      },
+      {
+        "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\Explorer",
+        "Name": "HideRecommendedSection",
+        "Value": "0",
+        "Type": "DWord",
+        "OriginalValue": "1",
+        "DefaultState": "true"
+      }
+    ],
+    "InvokeScript": [
+      "
+      Invoke-WinUtilExplorerUpdate -action \"restart\"
+      "
+    ],
+    "UndoScript": [
+      "
+      Invoke-WinUtilExplorerUpdate -action \"restart\"
+      "
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/customize-preferences/startmenurecommendations"
+  },
+  "WPFToggleStickyKeys": {
+    "Content": "Teclas Especiales (Sticky Keys)",
+    "Description": "Si está habilitado, las Teclas Especiales se activan. Es una función de accesibilidad que ayuda a los usuarios con discapacidades físicas o para reducir lesiones por esfuerzo repetitivo.",
+    "category": "Personalizar Preferencias",
+    "panel": "2",
+    "Type": "Toggle",
+    "registry": [
+      {
+        "Path": "HKCU:\\Control Panel\\Accessibility\\StickyKeys",
+        "Name": "Flags",
+        "Value": "506",
+        "Type": "DWord",
+        "OriginalValue": "58",
+        "DefaultState": "true"
+      }
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/customize-preferences/stickykeys"
+  },
+  "WPFToggleTaskbarAlignment": {
+    "Content": "Iconos Centrados en Barra de Tareas",
+    "Description": "[Windows 11] Si está habilitado, los elementos de la Barra de Tareas se mostrarán en el Centro; de lo contrario, se mostrarán a la Izquierda.",
+    "category": "Personalizar Preferencias",
+    "panel": "2",
+    "Type": "Toggle",
+    "registry": [
+      {
+        "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+        "Name": "TaskbarAl",
+        "Value": "1",
+        "Type": "DWord",
+        "OriginalValue": "0",
+        "DefaultState": "true"
+      }
+    ],
+    "InvokeScript": [
+      "
+      Invoke-WinUtilExplorerUpdate -action \"restart\"
+      "
+    ],
+    "UndoScript": [
+      "
+      Invoke-WinUtilExplorerUpdate -action \"restart\"
+      "
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/customize-preferences/taskbaralignment"
+  },
+  "WPFToggleTaskbarSearch": {
+    "Content": "Ícono de Búsqueda en Barra de Tareas",
+    "Description": "Si está habilitado, el botón de Búsqueda estará en la Barra de Tareas.",
+    "category": "Personalizar Preferencias",
+    "panel": "2",
+    "Type": "Toggle",
+    "registry": [
+      {
+        "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Search",
+        "Name": "SearchboxTaskbarMode",
+        "Value": "1",
+        "Type": "DWord",
+        "OriginalValue": "0",
+        "DefaultState": "true"
+      }
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/customize-preferences/taskbarsearch"
+  },
+  "WPFToggleTaskView": {
+    "Content": "Ícono de Vista de Tareas en Barra de Tareas",
+    "Description": "Si está habilitado, el botón de Vista de Tareas se mostrará en la Barra de Tareas.",
+    "category": "Personalizar Preferencias",
+    "panel": "2",
+    "Type": "Toggle",
+    "registry": [
+      {
+        "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+        "Name": "ShowTaskViewButton",
+        "Value": "1",
+        "Type": "DWord",
+        "OriginalValue": "0",
+        "DefaultState": "true"
+      }
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/customize-preferences/taskview"
+  },
+  "WPFOOSUbutton": {
+    "Content": "O&O ShutUp10++ - Ejecutar",
+    "category": "z__Ajustes Avanzados - PRECAUCIÓN",
+    "panel": "1",
+    "Type": "Button",
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/z--advanced-tweaks---caution/oosubutton"
+  },
+  "WPFchangedns": {
+    "Content": "DNS - Establecer en:",
+    "category": "z__Ajustes Avanzados - PRECAUCIÓN",
+    "panel": "1",
+    "Type": "Combobox",
+    "ComboItems": "Default DHCP Google Cloudflare Cloudflare_Malware Cloudflare_Malware_Adult Open_DNS Quad9 AdGuard_Ads_Trackers AdGuard_Ads_Trackers_Malware_Adult",
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/z--advanced-tweaks---caution/changedns"
+  },
+  "WPFAddUltPerf": {
+    "Content": "Perfil de Máximo Rendimiento - Activar",
+    "category": "Planes de Rendimiento",
+    "panel": "2",
+    "Type": "Button",
+    "ButtonWidth": "300",
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/performance-plans/addultperf"
+  },
+  "WPFRemoveUltPerf": {
+    "Content": "Perfil de Máximo Rendimiento - Desactivar",
+    "category": "Planes de Rendimiento",
+    "panel": "2",
+    "Type": "Button",
+    "ButtonWidth": "300",
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/performance-plans/removeultperf"
+  },
+  "WPFTweaksDisableExplorerAutoDiscovery": {
+    "Content": "Descubrimiento Automático de Carpetas del Explorador - Desactivar",
+    "Description": "El Explorador intenta adivinar automáticamente el tipo de carpeta según su contenido, ralentizando la navegación. ¡ADVERTENCIA! Esto desactivará la agrupación del Explorador.",
+    "category": "Ajustes Esenciales",
+    "panel": "1",
+    "InvokeScript": [
+      "
+      # Previously detected folders
+      $bags = \"HKCU:\\Software\\Classes\\Local Settings\\Software\\Microsoft\\Windows\\Shell\\Bags\"
+
+      # Folder types lookup table
+      $bagMRU = \"HKCU:\\Software\\Classes\\Local Settings\\Software\\Microsoft\\Windows\\Shell\\BagMRU\"
+
+      # Flush Explorer view database
+      Remove-Item -Path $bags -Recurse -Force
+      Write-Host \"Removed $bags\"
+
+      Remove-Item -Path $bagMRU -Recurse -Force
+      Write-Host \"Removed $bagMRU\"
+
+      # Every folder
+      $allFolders = \"HKCU:\\Software\\Classes\\Local Settings\\Software\\Microsoft\\Windows\\Shell\\Bags\\AllFolders\\Shell\"
+
+      if (!(Test-Path $allFolders)) {
+        New-Item -Path $allFolders -Force
+        Write-Host \"Created $allFolders\"
+      }
+
+      # Generic view
+      New-ItemProperty -Path $allFolders -Name \"FolderType\" -Value \"NotSpecified\" -PropertyType String -Force
+      Write-Host \"Set FolderType to NotSpecified\"
+
+      Write-Host Please sign out and back in, or restart your computer to apply the changes!
+      "
+    ],
+    "UndoScript": [
+      "
+      # Previously detected folders
+      $bags = \"HKCU:\\Software\\Classes\\Local Settings\\Software\\Microsoft\\Windows\\Shell\\Bags\"
+
+      # Folder types lookup table
+      $bagMRU = \"HKCU:\\Software\\Classes\\Local Settings\\Software\\Microsoft\\Windows\\Shell\\BagMRU\"
+
+      # Flush Explorer view database
+      Remove-Item -Path $bags -Recurse -Force
+      Write-Host \"Removed $bags\"
+
+      Remove-Item -Path $bagMRU -Recurse -Force
+      Write-Host \"Removed $bagMRU\"
+
+      Write-Host Please sign out and back in, or restart your computer to apply the changes!
+      "
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/tweaks/essential-tweaks/disableexplorerautodiscovery"
+  }
+}

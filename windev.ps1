@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
     This Script is used as a target for the https://servicepcglew-winutil.pages.dev/winutil.ps1dev alias.
 .DESCRIPTION
@@ -9,5 +9,4 @@
     Run in Admin Powershell >  ./windev.ps1
 #>
 
-$latestTag = (Invoke-RestMethod "https://api.github.com/repos/ServicePCGlew/winutil/tags")[0].name
-Invoke-RestMethod "https://github.com/servicepcglew/winutil/releases/download/$latestTag/winutil.ps1" | Invoke-Expression
+Invoke-RestMethod "https://servicepcglew-winutil.pages.dev/winutil.ps1" | Invoke-Expression

@@ -1,0 +1,322 @@
+﻿{
+  "WPFFeaturesdotnet": {
+    "Content": ".NET Framework (Versiones 2, 3, 4) - Activar",
+    "Description": ".NET y .NET Framework es una plataforma de desarrollo compuesta por herramientas, lenguajes de programación y bibliotecas para crear muchos tipos diferentes de aplicaciones.",
+    "category": "Características",
+    "panel": "1",
+    "feature": [
+      "NetFx4-AdvSrvs",
+      "NetFx3"
+    ],
+    "InvokeScript": [],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/features/features/dotnet"
+  },
+  "WPFFixesNTPPool": {
+    "Content": "Servidor NTP - Activar",
+    "Description": "Reemplaza el servidor NTP de Windows por defecto (time.windows.com) con pool.ntp.org para mejorar la precisión y confiabilidad de la sincronización de la hora.",
+    "category": "Correcciones",
+    "panel": "1",
+    "Type": "Button",
+    "ButtonWidth": "300",
+    "function": "Invoke-WPFFixesNTPPool",
+    "link": "https://servicepcglew-winutil.pages.dev/dev/features/fixes/ntppool"
+  },
+  "WPFFeatureshyperv": {
+    "Content": "Hyper-V - Activar",
+    "Description": "Hyper-V es un producto de virtualización de hardware desarrollado por Microsoft que permite a los usuarios crear y gestionar máquinas virtuales.",
+    "category": "Características",
+    "panel": "1",
+    "feature": [
+      "Microsoft-Hyper-V-All"
+    ],
+    "InvokeScript": [
+      "bcdedit /set hypervisorschedulertype classic"
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/features/features/hyperv"
+  },
+  "WPFFeatureslegacymedia": {
+    "Content": "Componentes Multimedia Heredados (WMP, DirectPlay) - Activar",
+    "Description": "Habilita programas heredados de versiones anteriores de Windows.",
+    "category": "Características",
+    "panel": "1",
+    "feature": [
+      "WindowsMediaPlayer",
+      "MediaPlayback",
+      "DirectPlay",
+      "LegacyComponents"
+    ],
+    "InvokeScript": [],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/features/features/legacymedia"
+  },
+  "WPFFeaturewsl": {
+    "Content": "Subsistema de Windows para Linux (WSL) - Activar",
+    "Description": "El Subsistema de Windows para Linux es una característica opcional que permite ejecutar programas de Linux de forma nativa en Windows sin necesidad de una máquina virtual separada o arranque dual.",
+    "category": "Características",
+    "panel": "1",
+    "feature": [
+      "VirtualMachinePlatform",
+      "Microsoft-Windows-Subsystem-Linux"
+    ],
+    "InvokeScript": [],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/features/features/wsl"
+  },
+  "WPFFeaturenfs": {
+    "Content": "Sistema de Archivos de Red (NFS) - Activar",
+    "Description": "El Sistema de Archivos de Red (NFS) es un mecanismo para almacenar archivos en una red.",
+    "category": "Características",
+    "panel": "1",
+    "feature": [
+      "ServicesForNFS-ClientOnly",
+      "ClientForNFS-Infrastructure",
+      "NFS-Administration"
+    ],
+    "InvokeScript": [
+      "nfsadmin client stop",
+      "Set-ItemProperty -Path 'HKLM:\\SOFTWARE\\Microsoft\\ClientForNFS\\CurrentVersion\\Default' -Name 'AnonymousUID' -Type DWord -Value 0",
+      "Set-ItemProperty -Path 'HKLM:\\SOFTWARE\\Microsoft\\ClientForNFS\\CurrentVersion\\Default' -Name 'AnonymousGID' -Type DWord -Value 0",
+      "nfsadmin client start",
+      "nfsadmin client localhost config fileaccess=755 SecFlavors=+sys -krb5 -krb5i"
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/features/features/nfs"
+  },
+  "WPFFeatureRegBackup": {
+    "Content": "Copia de Seguridad del Registro (Tarea Diaria 12:30am) - Activar",
+    "Description": "Habilita la copia de seguridad diaria del registro, previamente deshabilitada por Microsoft en Windows 10 1803.",
+    "category": "Características",
+    "panel": "1",
+    "feature": [],
+    "InvokeScript": [
+      "
+      New-ItemProperty -Path 'HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Configuration Manager' -Name 'EnablePeriodicBackup' -Type DWord -Value 1 -Force
+      New-ItemProperty -Path 'HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Configuration Manager' -Name 'BackupCount' -Type DWord -Value 2 -Force
+      $action = New-ScheduledTaskAction -Execute 'schtasks' -Argument '/run /i /tn \"\\Microsoft\\Windows\\Registry\\RegIdleBackup\"'
+      $trigger = New-ScheduledTaskTrigger -Daily -At 00:30
+      Register-ScheduledTask -Action $action -Trigger $trigger -TaskName 'AutoRegBackup' -Description 'Create System Registry Backups' -User 'System'
+      "
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/features/features/regbackup"
+  },
+  "WPFFeatureEnableLegacyRecovery": {
+    "Content": "Recuperación de Arranque F8 Heredada - Activar",
+    "Description": "Habilita la pantalla de Opciones de Arranque Avanzadas que te permite iniciar Windows en modos de solución de problemas avanzados.",
+    "category": "Características",
+    "panel": "1",
+    "feature": [],
+    "InvokeScript": [
+      "bcdedit /set bootmenupolicy legacy"
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/features/features/enablelegacyrecovery"
+  },
+  "WPFFeatureDisableLegacyRecovery": {
+    "Content": "Recuperación de Arranque F8 Heredada - Desactivar",
+    "Description": "Deshabilita la pantalla de Opciones de Arranque Avanzadas que te permite iniciar Windows en modos de solución de problemas avanzados.",
+    "category": "Características",
+    "panel": "1",
+    "feature": [],
+    "InvokeScript": [
+      "bcdedit /set bootmenupolicy standard"
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/features/features/disablelegacyrecovery"
+  },
+  "WPFFeaturesSandbox": {
+    "Content": "Windows Sandbox - Activar",
+    "Description": "Windows Sandbox es una máquina virtual ligera que proporciona un entorno de escritorio temporal para ejecutar aplicaciones y programas de forma segura y aislada.",
+    "category": "Características",
+    "panel": "1",
+    "feature": [
+      "Containers-DisposableClientVM"
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/features/features/sandbox"
+  },
+  "WPFFeatureInstall": {
+    "Content": "Ejecutar Características",
+    "category": "Características",
+    "panel": "1",
+    "Type": "Button",
+    "ButtonWidth": "300",
+    "function": "Invoke-WPFFeatureInstall",
+    "link": "https://servicepcglew-winutil.pages.dev/dev/features/features/install"
+  },
+  "WPFPanelAutologin": {
+    "Content": "AutoLogon (Inicio automático) - Ejecutar",
+    "category": "Correcciones",
+    "panel": "1",
+    "Type": "Button",
+    "ButtonWidth": "300",
+    "function": "Invoke-WPFPanelAutologin",
+    "link": "https://servicepcglew-winutil.pages.dev/dev/features/fixes/autologin"
+  },
+  "WPFFixesUpdate": {
+    "Content": "Windows Update - Restablecer",
+    "category": "Correcciones",
+    "panel": "1",
+    "Type": "Button",
+    "ButtonWidth": "300",
+    "function": "Invoke-WPFFixesUpdate",
+    "link": "https://servicepcglew-winutil.pages.dev/dev/features/fixes/update"
+  },
+  "WPFFixesNetwork": {
+    "Content": "Red - Restablecer",
+    "category": "Correcciones",
+    "panel": "1",
+    "Type": "Button",
+    "ButtonWidth": "300",
+    "function": "Invoke-WPFFixesNetwork",
+    "link": "https://servicepcglew-winutil.pages.dev/dev/features/fixes/network"
+  },
+  "WPFPanelDISM": {
+    "Content": "Escaneo de Corrupción del Sistema - Ejecutar",
+    "category": "Correcciones",
+    "panel": "1",
+    "Type": "Button",
+    "ButtonWidth": "300",
+    "function": "Invoke-WPFSystemRepair",
+    "link": "https://servicepcglew-winutil.pages.dev/dev/features/fixes/dism"
+  },
+  "WPFFixesWinget": {
+    "Content": "WinGet - Reinstalar",
+    "category": "Correcciones",
+    "panel": "1",
+    "Type": "Button",
+    "ButtonWidth": "300",
+    "function": "Invoke-WPFFixesWinget",
+    "link": "https://servicepcglew-winutil.pages.dev/dev/features/fixes/winget"
+  },
+  "WPFPanelControl": {
+    "Content": "Panel de Control",
+    "category": "Paneles Heredados de Windows",
+    "panel": "2",
+    "Type": "Button",
+    "ButtonWidth": "300",
+    "InvokeScript": [
+      "control"
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/features/legacy-windows-panels/control"
+  },
+  "WPFPanelComputer": {
+    "Content": "Administración de Equipos",
+    "category": "Paneles Heredados de Windows",
+    "panel": "2",
+    "Type": "Button",
+    "ButtonWidth": "300",
+    "InvokeScript": [
+      "compmgmt.msc"
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/features/legacy-windows-panels/computer"
+  },
+  "WPFPanelNetwork": {
+    "Content": "Conexiones de Red",
+    "category": "Paneles Heredados de Windows",
+    "panel": "2",
+    "Type": "Button",
+    "ButtonWidth": "300",
+    "InvokeScript": [
+      "ncpa.cpl"
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/features/legacy-windows-panels/network"
+  },
+  "WPFPanelPower": {
+    "Content": "Opciones de Energía",
+    "category": "Paneles Heredados de Windows",
+    "panel": "2",
+    "Type": "Button",
+    "ButtonWidth": "300",
+    "InvokeScript": [
+      "powercfg.cpl"
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/features/legacy-windows-panels/power"
+  },
+  "WPFPanelPrinter": {
+    "Content": "Dispositivos e Impresoras",
+    "category": "Paneles Heredados de Windows",
+    "panel": "2",
+    "Type": "Button",
+    "ButtonWidth": "300",
+    "InvokeScript": [
+      "Start-Process 'shell:::{A8A91A66-3A7D-4424-8D24-04E180695C7A}'"
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/features/legacy-windows-panels/printer"
+  },
+  "WPFPanelRegion": {
+    "Content": "Región",
+    "category": "Paneles Heredados de Windows",
+    "panel": "2",
+    "Type": "Button",
+    "ButtonWidth": "300",
+    "InvokeScript": [
+      "intl.cpl"
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/features/legacy-windows-panels/region"
+  },
+  "WPFPanelRestore": {
+    "Content": "Restaurar Sistema",
+    "category": "Paneles Heredados de Windows",
+    "panel": "2",
+    "Type": "Button",
+    "ButtonWidth": "300",
+    "InvokeScript": [
+      "rstrui.exe"
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/features/legacy-windows-panels/restore"
+  },
+  "WPFPanelSound": {
+    "Content": "Opciones de Sonido",
+    "category": "Paneles Heredados de Windows",
+    "panel": "2",
+    "Type": "Button",
+    "ButtonWidth": "300",
+    "InvokeScript": [
+      "mmsys.cpl"
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/features/legacy-windows-panels/sound"
+  },
+  "WPFPanelSystem": {
+    "Content": "Propiedades del Sistema",
+    "category": "Paneles Heredados de Windows",
+    "panel": "2",
+    "Type": "Button",
+    "ButtonWidth": "300",
+    "InvokeScript": [
+      "sysdm.cpl"
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/features/legacy-windows-panels/system"
+  },
+  "WPFPanelTimedate": {
+    "Content": "Fecha y Hora",
+    "category": "Paneles Heredados de Windows",
+    "panel": "2",
+    "Type": "Button",
+    "ButtonWidth": "300",
+    "InvokeScript": [
+      "timedate.cpl"
+    ],
+    "link": "https://servicepcglew-winutil.pages.dev/dev/features/legacy-windows-panels/timedate"
+  },
+  "WPFWinUtilInstallPSProfile": {
+    "Content": "Perfil PowerShell CTT - Instalar",
+    "category": "Perfil de Powershell Solo Powershell 7+",
+    "panel": "2",
+    "Type": "Button",
+    "ButtonWidth": "300",
+    "function": "Invoke-WinUtilInstallPSProfile",
+    "link": "https://servicepcglew-winutil.pages.dev/dev/features/powershell-profile-powershell-7--only/installpsprofile"
+  },
+  "WPFWinUtilUninstallPSProfile": {
+    "Content": "Perfil PowerShell CTT - Eliminar",
+    "category": "Perfil de Powershell Solo Powershell 7+",
+    "panel": "2",
+    "Type": "Button",
+    "ButtonWidth": "300",
+    "function": "Invoke-WinUtilUninstallPSProfile",
+    "link": "https://servicepcglew-winutil.pages.dev/dev/features/powershell-profile-powershell-7--only/uninstallpsprofile"
+  },
+  "WPFWinUtilSSHServer": {
+    "Content": "Servidor OpenSSH - Activar",
+    "category": "Acceso Remoto",
+    "panel": "2",
+    "Type": "Button",
+    "ButtonWidth": "300",
+    "function": "Invoke-WPFSSHServer",
+    "link": "https://servicepcglew-winutil.pages.dev/dev/features/remote-access/sshserver"
+  }
+}

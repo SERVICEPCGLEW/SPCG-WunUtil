@@ -1,0 +1,119 @@
+{
+    "WPFInstall": {
+        "Content": "Instalar/Actualizar Aplicaciones",
+        "Category": "____Acciones",
+        "Type": "Button",
+        "Order": "1",
+        "Description": "Instala o actualiza las aplicaciones seleccionadas"
+    },
+    "WPFUninstall": {
+        "Content": "Desinstalar Aplicaciones",
+        "Category": "____Acciones",
+        "Type": "Button",
+        "Order": "2",
+        "Description": "Desinstala las aplicaciones seleccionadas"
+    },
+    "WPFInstallUpgrade": {
+        "Content": "Actualizar todas las Aplicaciones",
+        "Category": "____Acciones",
+        "Type": "Button",
+        "Order": "3",
+        "Description": "Actualiza todas las aplicaciones a la última versión"
+    },
+    "WingetRadioButton": {
+        "Content": "WinGet",
+        "Category": "__Gestor de Paquetes",
+        "Type": "RadioButton",
+        "GroupName": "PackageManagerGroup",
+        "Checked": true,
+        "Order": "1",
+        "Description": "Usa WinGet para la gestión de paquetes"
+    },
+    "ChocoRadioButton": {
+        "Content": "Chocolatey",
+        "Category": "__Gestor de Paquetes",
+        "Type": "RadioButton",
+        "GroupName": "PackageManagerGroup",
+        "Checked": false,
+        "Order": "2",
+        "Description": "Usa Chocolatey para la gestión de paquetes"
+    },
+    "WPFCollapseAllCategories": {
+        "Content": "Contraer Todas las Categorías",
+        "Category": "__Selección",
+        "Type": "Button",
+        "Order": "1",
+        "Description": "Contrae todas las categorías de aplicaciones"
+    },
+    "WPFExpandAllCategories": {
+        "Content": "Expandir Todas las Categorías",
+        "Category": "__Selección",
+        "Type": "Button",
+        "Order": "2",
+        "Description": "Expande todas las categorías de aplicaciones"
+    },
+    "WPFClearInstallSelection": {
+        "Content": "Limpiar Selección",
+        "Category": "__Selección",
+        "Type": "Button",
+        "Order": "3",
+        "Description": "Limpia la selección de aplicaciones"
+    },
+    "WPFGetInstalled": {
+        "Content": "Mostrar Apps Instaladas",
+        "Category": "__Selección",
+        "Type": "Button",
+        "Order": "4",
+        "Description": "Muestra las aplicaciones instaladas"
+    },
+    "WPFselectedAppsButton": {
+        "Content": "Apps Seleccionadas: 0",
+        "Category": "__Selección",
+        "Type": "Button",
+        "Order": "5",
+        "Description": "Muestra las aplicaciones seleccionadas"
+    },
+    "WPFToggleFOSSHighlight": {
+        "Content": "Resaltar FOSS",
+        "Category": "__Selección",
+        "Type": "Toggle",
+        "Checked": true,
+        "Order": "6",
+        "Description": "Alterna el resaltado verde para las aplicaciones FOSS (Software Libre)"
+    },
+    "WPFMAS": {
+        "Content": "Windows 10, 11 & Office",
+        "Category": "z__Activaciones",
+        "Type": "Button",
+        "Order": "1",
+        "Description": "Ejecuta los scripts oficiales de activación de Microsoft (MAS)"
+    },
+    "WPFActivation2": {
+        "Content": "Windows 7 Pro  & Enterprise",
+        "Category": "z__Activaciones",
+        "Type": "Button",
+        "Order": "2",
+        "Description": "Activa Windows 7 Pro o Enterprise mediante KMS"
+    },
+    "WPFBulkCrapUninstaller": {
+        "Content": "Bulk-Crap-Uninstaller (portable)",
+        "Category": "zz__Desinstalaciones",
+        "Type": "Button",
+        "Order": "2",
+        "Description": "Descarga y extrae la última versión portable de Bulk Crap Uninstaller en tu Escritorio"
+    },
+    "WPFBulkCrapUninstallerInstall": {
+        "Content": "Bulk-Crap-Uninstaller (instalar)",
+        "Category": "zz__Desinstalaciones",
+        "Type": "Button",
+        "Order": "1",
+        "Description": "Instala Bulk Crap Uninstaller en tu sistema usando Winget"
+    },
+    "WPFAutoYAOCTRI": {
+        "Content": "Auto YAOCTRI",
+        "Category": "zzz__Microsoft Office",
+        "Type": "Button",
+        "Order": "1",
+        "Description": "Instalación y despliegue de Office con limpieza profunda del sistema"
+    }
+}

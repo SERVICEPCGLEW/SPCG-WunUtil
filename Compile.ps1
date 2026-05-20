@@ -124,7 +124,7 @@ Remove-Item "xaml\inputApp.xaml" -ErrorAction SilentlyContinue
 Remove-Item "xaml\inputTweaks.xaml" -ErrorAction SilentlyContinue
 Remove-Item "xaml\inputFeatures.xaml" -ErrorAction SilentlyContinue
 
-Set-Content -Path "$scriptname" -Value ($script_content -join "`r`n") -Encoding UTF8
+[System.IO.File]::WriteAllText("$workingdir\$scriptname", ($script_content -join "`r`n"), [System.Text.UTF8Encoding]::new($false))
 Write-Progress -Activity "Compiling" -Completed
 
 Update-Progress -Activity "Validating" -StatusMessage "Checking winutil.ps1 Syntax" -Percent 0
