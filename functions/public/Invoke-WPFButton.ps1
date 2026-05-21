@@ -173,21 +173,8 @@ function Invoke-WPFButton {
             $grid.Children.Add($stackPanel) | Out-Null
             [Windows.Controls.Grid]::SetRow($stackPanel, 0)
 
-            $customLogoPath = "$($sync.PSScriptRoot)\marca de agua.png"
-            if (Test-Path $customLogoPath) {
-                try {
-                    $logoImage = New-Object System.Windows.Controls.Image
-                    $logoBitmap = New-Object System.Windows.Media.Imaging.BitmapImage
-                    $logoBitmap.BeginInit()
-                    $logoBitmap.UriSource = [Uri]$customLogoPath
-                    $logoBitmap.CacheOption = [Windows.Media.Imaging.BitmapCacheOption]::OnLoad
-                    $logoBitmap.EndInit()
-                    $logoImage.Source = $logoBitmap
-                    $logoImage.Height = 24
-                    $logoImage.Stretch = [System.Windows.Media.Stretch]::Uniform
-                    $stackPanel.Children.Add($logoImage) | Out-Null
-                } catch {}
-            }
+            # Add CTT vector logo
+            $stackPanel.Children.Add((Invoke-WinUtilAssets -Type "logo" -Size 26)) | Out-Null
 
             $winutilTextBlock = New-Object Windows.Controls.TextBlock
             $winutilTextBlock.Text = " Service PC Glew"
@@ -320,21 +307,8 @@ pause
             $grid.Children.Add($stackPanel) | Out-Null
             [Windows.Controls.Grid]::SetRow($stackPanel, 0)
 
-            $customLogoPath = "$($sync.PSScriptRoot)\marca de agua.png"
-            if (Test-Path $customLogoPath) {
-                try {
-                    $logoImage = New-Object System.Windows.Controls.Image
-                    $logoBitmap = New-Object System.Windows.Media.Imaging.BitmapImage
-                    $logoBitmap.BeginInit()
-                    $logoBitmap.UriSource = [Uri]$customLogoPath
-                    $logoBitmap.CacheOption = [Windows.Media.Imaging.BitmapCacheOption]::OnLoad
-                    $logoBitmap.EndInit()
-                    $logoImage.Source = $logoBitmap
-                    $logoImage.Height = 24
-                    $logoImage.Stretch = [System.Windows.Media.Stretch]::Uniform
-                    $stackPanel.Children.Add($logoImage) | Out-Null
-                } catch {}
-            }
+            # Add CTT vector logo
+            $stackPanel.Children.Add((Invoke-WinUtilAssets -Type "logo" -Size 26)) | Out-Null
 
             $winutilTextBlock = New-Object Windows.Controls.TextBlock
             $winutilTextBlock.Text = " Service PC Glew"

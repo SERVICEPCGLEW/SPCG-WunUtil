@@ -953,64 +953,42 @@ function Invoke-WinUtilAssets {
 
   switch ($type) {
       'logo' {
-          $LogoPathData1 = @"
-M 18.00,14.00
-C 18.00,14.00 45.00,27.74 45.00,27.74
-45.00,27.74 57.40,34.63 57.40,34.63
-57.40,34.63 59.00,43.00 59.00,43.00
-59.00,43.00 59.00,83.00 59.00,83.00
-55.35,81.66 46.99,77.79 44.72,74.79
-41.17,70.10 42.01,59.80 42.00,54.00
-42.00,51.62 42.20,48.29 40.98,46.21
-38.34,41.74 25.78,38.60 21.28,33.79
-16.81,29.02 18.00,20.20 18.00,14.00 Z
-"@
-          $LogoPath1 = New-Object Windows.Shapes.Path
-          $LogoPath1.Data = [Windows.Media.Geometry]::Parse($LogoPathData1)
-          $LogoPath1.Fill = [System.Windows.Media.BrushConverter]::new().ConvertFromString("#0567ff")
+          $customLogoPath = ""
+          if ($sync.PSScriptRoot) {
+              $customLogoPath = "$($sync.PSScriptRoot)\logo.png"
+          } elseif ($PSScriptRoot) {
+              $customLogoPath = "$PSScriptRoot\logo.png"
+          } else {
+              $customLogoPath = ".\logo.png"
+          }
 
-          $LogoPathData2 = @"
-M 107.00,14.00
-C 109.01,19.06 108.93,30.37 104.66,34.21
-100.47,37.98 86.38,43.10 84.60,47.21
-83.94,48.74 84.01,51.32 84.00,53.00
-83.97,57.04 84.46,68.90 83.26,72.00
-81.06,77.70 72.54,81.42 67.00,83.00
-67.00,83.00 67.00,43.00 67.00,43.00
-67.00,43.00 67.99,35.63 67.99,35.63
-67.99,35.63 80.00,28.26 80.00,28.26
-80.00,28.26 107.00,14.00 107.00,14.00 Z
-"@
-          $LogoPath2 = New-Object Windows.Shapes.Path
-          $LogoPath2.Data = [Windows.Media.Geometry]::Parse($LogoPathData2)
-          $LogoPath2.Fill = [System.Windows.Media.BrushConverter]::new().ConvertFromString("#0567ff")
+          if (Test-Path $customLogoPath) {
+              try {
+                  $logoBitmap = New-Object System.Windows.Media.Imaging.BitmapImage
+                  $logoBitmap.BeginInit()
+                  $logoBitmap.UriSource = [Uri]$customLogoPath
+                  $logoBitmap.CacheOption = [Windows.Media.Imaging.BitmapCacheOption]::OnLoad
+                  $logoBitmap.EndInit()
 
-          $LogoPathData3 = @"
-M 19.00,46.00
-C 21.36,47.14 28.67,50.71 30.01,52.63
-31.17,54.30 30.99,57.04 31.00,59.00
-31.04,65.41 30.35,72.16 33.56,78.00
-38.19,86.45 46.10,89.04 54.00,93.31
-56.55,94.69 60.10,97.20 63.00,97.22
-65.50,97.24 68.77,95.36 71.00,94.25
-76.42,91.55 84.51,87.78 88.82,83.68
-94.56,78.20 95.96,70.59 96.00,63.00
-96.01,60.24 95.59,54.63 97.02,52.39
-98.80,49.60 103.95,47.87 107.00,47.00
-107.00,47.00 107.00,67.00 107.00,67.00
-106.90,87.69 96.10,93.85 80.00,103.00
-76.51,104.98 66.66,110.67 63.00,110.52
-60.33,110.41 55.55,107.53 53.00,106.25
-46.21,102.83 36.63,98.57 31.04,93.68
-16.88,81.28 19.00,62.88 19.00,46.00 Z
-"@
-          $LogoPath3 = New-Object Windows.Shapes.Path
-          $LogoPath3.Data = [Windows.Media.Geometry]::Parse($LogoPathData3)
-          $LogoPath3.Fill = [System.Windows.Media.BrushConverter]::new().ConvertFromString("#a3a4a6")
+                  if ($render) {
+                      return $logoBitmap
+                  }
 
-          $canvas.Children.Add($LogoPath1) | Out-Null
-          $canvas.Children.Add($LogoPath2) | Out-Null
-          $canvas.Children.Add($LogoPath3) | Out-Null
+                  $logoImage = New-Object System.Windows.Controls.Image
+                  $logoImage.Source = $logoBitmap
+                  $logoImage.Stretch = [System.Windows.Media.Stretch]::Uniform
+                  
+                  # Set high quality scaling so the raster logo scales beautifully and remains crisp
+                  [System.Windows.Media.RenderOptions]::SetBitmapScalingMode($logoImage, [System.Windows.Media.BitmapScalingMode]::HighQuality)
+                  
+                  # Adjust the Viewbox height to match the official logo.png aspect ratio (839x564)
+                  $LogoViewbox.Height = $Size * (564 / 839)
+                  $LogoViewbox.Child = $logoImage
+                  return $LogoViewbox
+              } catch {
+                  Write-Debug "Could not load logo.png: $_"
+              }
+          }
       }
       'checkmark' {
           $canvas.Width = 512
@@ -3737,27 +3715,8 @@ function Show-CustomDialog {
     $grid.Children.Add($stackPanel)
     [Windows.Controls.Grid]::SetRow($stackPanel, 0)  # Set the row to the second row (0-based index)
 
-    # Add custom logo if exists, otherwise default SVG
-    $customLogoPath = "$($sync.PSScriptRoot)\marca de agua.png"
-    if (Test-Path $customLogoPath) {
-        try {
-            $logoImage = New-Object System.Windows.Controls.Image
-            $logoBitmap = New-Object System.Windows.Media.Imaging.BitmapImage
-            $logoBitmap.BeginInit()
-            $logoBitmap.UriSource = [Uri]$customLogoPath
-            $logoBitmap.CacheOption = [Windows.Media.Imaging.BitmapCacheOption]::OnLoad
-            $logoBitmap.EndInit()
-            $logoImage.Source = $logoBitmap
-            # Make the logo slightly larger in dialogs so it looks proportionate
-            $logoImage.Height = $LogoSize * 1.5
-            $logoImage.Stretch = [System.Windows.Media.Stretch]::Uniform
-            $stackPanel.Children.Add($logoImage) | Out-Null
-        } catch {
-            $stackPanel.Children.Add((Invoke-WinUtilAssets -Type "logo" -Size $LogoSize)) | Out-Null
-        }
-    } else {
-        $stackPanel.Children.Add((Invoke-WinUtilAssets -Type "logo" -Size $LogoSize)) | Out-Null
-    }
+    # Add CTT vector logo
+    $stackPanel.Children.Add((Invoke-WinUtilAssets -Type "logo" -Size $LogoSize)) | Out-Null
 
     # Add "Service PC Glew" text
     $winutilTextBlock = New-Object Windows.Controls.TextBlock
@@ -4379,21 +4338,8 @@ function Invoke-WPFButton {
             $grid.Children.Add($stackPanel) | Out-Null
             [Windows.Controls.Grid]::SetRow($stackPanel, 0)
 
-            $customLogoPath = "$($sync.PSScriptRoot)\marca de agua.png"
-            if (Test-Path $customLogoPath) {
-                try {
-                    $logoImage = New-Object System.Windows.Controls.Image
-                    $logoBitmap = New-Object System.Windows.Media.Imaging.BitmapImage
-                    $logoBitmap.BeginInit()
-                    $logoBitmap.UriSource = [Uri]$customLogoPath
-                    $logoBitmap.CacheOption = [Windows.Media.Imaging.BitmapCacheOption]::OnLoad
-                    $logoBitmap.EndInit()
-                    $logoImage.Source = $logoBitmap
-                    $logoImage.Height = 24
-                    $logoImage.Stretch = [System.Windows.Media.Stretch]::Uniform
-                    $stackPanel.Children.Add($logoImage) | Out-Null
-                } catch {}
-            }
+            # Add CTT vector logo
+            $stackPanel.Children.Add((Invoke-WinUtilAssets -Type "logo" -Size 26)) | Out-Null
 
             $winutilTextBlock = New-Object Windows.Controls.TextBlock
             $winutilTextBlock.Text = " Service PC Glew"
@@ -4526,21 +4472,8 @@ pause
             $grid.Children.Add($stackPanel) | Out-Null
             [Windows.Controls.Grid]::SetRow($stackPanel, 0)
 
-            $customLogoPath = "$($sync.PSScriptRoot)\marca de agua.png"
-            if (Test-Path $customLogoPath) {
-                try {
-                    $logoImage = New-Object System.Windows.Controls.Image
-                    $logoBitmap = New-Object System.Windows.Media.Imaging.BitmapImage
-                    $logoBitmap.BeginInit()
-                    $logoBitmap.UriSource = [Uri]$customLogoPath
-                    $logoBitmap.CacheOption = [Windows.Media.Imaging.BitmapCacheOption]::OnLoad
-                    $logoBitmap.EndInit()
-                    $logoImage.Source = $logoBitmap
-                    $logoImage.Height = 24
-                    $logoImage.Stretch = [System.Windows.Media.Stretch]::Uniform
-                    $stackPanel.Children.Add($logoImage) | Out-Null
-                } catch {}
-            }
+            # Add CTT vector logo
+            $stackPanel.Children.Add((Invoke-WinUtilAssets -Type "logo" -Size 26)) | Out-Null
 
             $winutilTextBlock = New-Object Windows.Controls.TextBlock
             $winutilTextBlock.Text = " Service PC Glew"
@@ -6800,48 +6733,6 @@ function Invoke-WPFUpdatessecurity {
     Write-Host "--- Actualizaciones Recomendadas Activas ---"
     Write-Host "============================================"
 }
-Function Show-CTTLogo {
-    <#
-        .SYNOPSIS
-            Displays the CTT logo in ASCII art.
-        .DESCRIPTION
-            This function displays the CTT logo in ASCII art format.
-        .PARAMETER None
-            No parameters are required for this function.
-        .EXAMPLE
-            Show-CTTLogo
-            Prints the CTT logo in ASCII art format to the console.
-    #>
-
-    $E = [char]27
-    $orange = "$E[38;2;255;127;0m"
-    $white = "$E[38;2;255;255;255m"
-    $reset = "$E[0m"
-
-    # CAMBIA A $true PARA MOSTRAR EL LOGO GIGANTE, O $false PARA OCULTARLO
-    $MostrarLogoCompleto = $true
-
-    if ($MostrarLogoCompleto) {
-        $line1 = "${orange}  ____                  _            ____   ____    ____ _                  ${white}.---------.${reset}"
-        $line2 = "${orange} / ___|  ___ _ ____   _(_) ___ ___  |  _ \ / ___|  / ___| | _____      __   ${white}|.-------.|${reset}"
-        $line3 = "${orange} \___ \ / _ \ '__\ \ / / |/ __/ _ \ | |_) | |     | |  _| |/ _ \ \ /\ / /   ${white}||       ||${reset}"
-        $line4 = "${orange}  ___) |  __/ |   \ V /| | (_|  __/ |  __/| |___  | |_| | |  __/\ V  V /    ${white}`"-------'|${reset}"
-        $line5 = "${orange} |____/ \___|_|    \_/ |_|\___\___| |_|    \____|  \____|_|\___| \_/\_/   ${white}.-^---------^-.${reset}"
-        $line6 = "${orange}                                                                          ${white}`"-------------'${reset}"
-
-        Write-Host $line1
-        Write-Host $line2
-        Write-Host $line3
-        Write-Host $line4
-        Write-Host $line5
-        Write-Host $line6
-    }
-
-    Write-Host ""
-    Write-Host "$orange====$($white)Service PC Glew$orange=====$reset"
-    Write-Host "$orange=====$($white)Herramientas de Windows$orange=====$reset"
-    Write-Host "${orange}https://servicepcglew.pages.dev/$reset"
-}
 function Invoke-WPFDriverBooster {
     [OutputType([void])]
     param()
@@ -6902,6 +6793,48 @@ Read-Host "Presiona Enter para continuar..."
     $TempFile = Join-Path $env:TEMP "download-driverbooster.ps1"
     $ScriptContent | Out-File -FilePath $TempFile -Force -Encoding utf8
     Start-Process powershell -ArgumentList "-NoExit", "-ExecutionPolicy Bypass", "-File `"$TempFile`"" -Verb RunAs
+}
+Function Show-SPGLogo {
+    <#
+        .SYNOPSIS
+            Displays the Service PC Glew logo in ASCII art.
+        .DESCRIPTION
+            This function displays the Service PC Glew logo in ASCII art format.
+        .PARAMETER None
+            No parameters are required for this function.
+        .EXAMPLE
+            Show-SPGLogo
+            Prints the Service PC Glew logo in ASCII art format to the console.
+    #>
+
+    $E = [char]27
+    $orange = "$E[38;2;255;127;0m"
+    $white = "$E[38;2;255;255;255m"
+    $reset = "$E[0m"
+
+    # CAMBIA A $true PARA MOSTRAR EL LOGO GIGANTE, O $false PARA OCULTARLO
+    $MostrarLogoCompleto = $true
+
+    if ($MostrarLogoCompleto) {
+        $line1 = "${orange}  ____                  _            ____   ____    ____ _                  ${white}.---------.${reset}"
+        $line2 = "${orange} / ___|  ___ _ ____   _(_) ___ ___  |  _ \ / ___|  / ___| | _____      __   ${white}|.-------.|${reset}"
+        $line3 = "${orange} \___ \ / _ \ '__\ \ / / |/ __/ _ \ | |_) | |     | |  _| |/ _ \ \ /\ / /   ${white}||       ||${reset}"
+        $line4 = "${orange}  ___) |  __/ |   \ V /| | (_|  __/ |  __/| |___  | |_| | |  __/\ V  V /    ${white}`"-------'|${reset}"
+        $line5 = "${orange} |____/ \___|_|    \_/ |_|\___\___| |_|    \____|  \____|_|\___| \_/\_/   ${white}.-^---------^-.${reset}"
+        $line6 = "${orange}                                                                          ${white}`"-------------'${reset}"
+
+        Write-Host $line1
+        Write-Host $line2
+        Write-Host $line3
+        Write-Host $line4
+        Write-Host $line5
+        Write-Host $line6
+    }
+
+    Write-Host ""
+    Write-Host "$orange====$($white)Service PC Glew$orange=====$reset"
+    Write-Host "$orange=====$($white)Herramientas de Windows$orange=====$reset"
+    Write-Host "${orange}https://servicepcglew.pages.dev/$reset"
 }
 $sync.configs.applications = @'
 {
@@ -9153,7 +9086,7 @@ $sync.configs.themes = @'
                    "AppEntryBorderThickness":  "0",
                    "CustomDialogFontSize":  "12",
                    "CustomDialogFontSizeHeader":  "14",
-                   "CustomDialogLogoSize":  "25",
+                   "CustomDialogLogoSize":  "48",
                    "CustomDialogWidth":  "400",
                    "CustomDialogHeight":  "200",
                    "FontSize":  "12",
@@ -13172,7 +13105,7 @@ $sync.configs.applications.PSObject.Properties | ForEach-Object {
 Set-Preferences
 
 if ($PARAM_NOUI) {
-    Show-CTTLogo
+    Show-SPGLogo
     if ($PARAM_CONFIG -and -not [string]::IsNullOrWhiteSpace($PARAM_CONFIG)) {
         Write-Host "Running config file tasks..."
         Invoke-WPFImpex -type "import" -Config $PARAM_CONFIG
@@ -13359,25 +13292,17 @@ Invoke-WPFRunspace -ScriptBlock {
 #===========================================================================
 
 # Print the logo
-Show-CTTLogo
+Show-SPGLogo
 
 # Progress bar in taskbaritem > Set-WinUtilProgressbar
 $sync["Form"].TaskbarItemInfo = New-Object System.Windows.Shell.TaskbarItemInfo
 Set-WinUtilTaskbaritem -state "None"
 
-# Set custom window icon if the watermark file exists
-$customLogoPath = "$($sync.PSScriptRoot)\marca de agua.png"
-if (Test-Path $customLogoPath) {
-    try {
-        $windowIcon = New-Object System.Windows.Media.Imaging.BitmapImage
-        $windowIcon.BeginInit()
-        $windowIcon.UriSource = [Uri]$customLogoPath
-        $windowIcon.CacheOption = [Windows.Media.Imaging.BitmapCacheOption]::OnLoad
-        $windowIcon.EndInit()
-        $sync["Form"].Icon = $windowIcon
-    } catch {
-        Write-Debug "Could not load custom window icon: $_"
-    }
+# Set window icon
+try {
+    $sync["Form"].Icon = (Invoke-WinUtilAssets -Type "Logo" -Size 90 -Render)
+} catch {
+    Write-Debug "Could not load window icon: $_"
 }
 
 # Set the titlebar
@@ -13565,29 +13490,9 @@ $NavLogoPanel.Cursor = [System.Windows.Input.Cursors]::Hand
 $NavLogoPanel.Add_MouseLeftButtonDown({
     Start-Process "https://servicepcglew.pages.dev/"
 })
-if (Test-Path $customLogoPath) {
-    try {
-        $logoImage = New-Object System.Windows.Controls.Image
-        $logoBitmap = New-Object System.Windows.Media.Imaging.BitmapImage
-        $logoBitmap.BeginInit()
-        $logoBitmap.UriSource = [Uri]$customLogoPath
-        $logoBitmap.CacheOption = [Windows.Media.Imaging.BitmapCacheOption]::OnLoad
-        $logoBitmap.EndInit()
-        $logoImage.Source = $logoBitmap
-        $logoImage.Height = 38
-        $logoImage.Stretch = [System.Windows.Media.Stretch]::Uniform
-        $NavLogoPanel.Children.Add($logoImage) | Out-Null
-    } catch {
-        $NavLogoPanel.Children.Add((Invoke-WinUtilAssets -Type "logo" -Size 25)) | Out-Null
-    }
-} else {
-    $NavLogoPanel.Children.Add((Invoke-WinUtilAssets -Type "logo" -Size 25)) | Out-Null
-}
+$NavLogoPanel.Children.Add((Invoke-WinUtilAssets -Type "logo" -Size 48)) | Out-Null
 
-
-if (Test-Path $customLogoPath) {
-    $sync["logorender"] = $customLogoPath
-} elseif (Test-Path "$winutildir\logo.ico") {
+if (Test-Path "$winutildir\logo.ico") {
     $sync["logorender"] = "$winutildir\logo.ico"
 } else {
     $sync["logorender"] = (Invoke-WinUtilAssets -Type "Logo" -Size 90 -Render)

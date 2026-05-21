@@ -1,4 +1,4 @@
-﻿# Create enums
+# Create enums
 Add-Type @"
 public enum PackageManagers
 {
@@ -71,7 +71,7 @@ $sync.configs.applications.PSObject.Properties | ForEach-Object {
 Set-Preferences
 
 if ($PARAM_NOUI) {
-    Show-CTTLogo
+    Show-SPGLogo
     if ($PARAM_CONFIG -and -not [string]::IsNullOrWhiteSpace($PARAM_CONFIG)) {
         Write-Host "Running config file tasks..."
         Invoke-WPFImpex -type "import" -Config $PARAM_CONFIG
@@ -258,25 +258,17 @@ Invoke-WPFRunspace -ScriptBlock {
 #===========================================================================
 
 # Print the logo
-Show-CTTLogo
+Show-SPGLogo
 
 # Progress bar in taskbaritem > Set-WinUtilProgressbar
 $sync["Form"].TaskbarItemInfo = New-Object System.Windows.Shell.TaskbarItemInfo
 Set-WinUtilTaskbaritem -state "None"
 
-# Set custom window icon if the watermark file exists
-$customLogoPath = "$($sync.PSScriptRoot)\marca de agua.png"
-if (Test-Path $customLogoPath) {
-    try {
-        $windowIcon = New-Object System.Windows.Media.Imaging.BitmapImage
-        $windowIcon.BeginInit()
-        $windowIcon.UriSource = [Uri]$customLogoPath
-        $windowIcon.CacheOption = [Windows.Media.Imaging.BitmapCacheOption]::OnLoad
-        $windowIcon.EndInit()
-        $sync["Form"].Icon = $windowIcon
-    } catch {
-        Write-Debug "Could not load custom window icon: $_"
-    }
+# Set window icon
+try {
+    $sync["Form"].Icon = (Invoke-WinUtilAssets -Type "Logo" -Size 90 -Render)
+} catch {
+    Write-Debug "Could not load window icon: $_"
 }
 
 # Set the titlebar
@@ -464,29 +456,9 @@ $NavLogoPanel.Cursor = [System.Windows.Input.Cursors]::Hand
 $NavLogoPanel.Add_MouseLeftButtonDown({
     Start-Process "https://servicepcglew.pages.dev/"
 })
-if (Test-Path $customLogoPath) {
-    try {
-        $logoImage = New-Object System.Windows.Controls.Image
-        $logoBitmap = New-Object System.Windows.Media.Imaging.BitmapImage
-        $logoBitmap.BeginInit()
-        $logoBitmap.UriSource = [Uri]$customLogoPath
-        $logoBitmap.CacheOption = [Windows.Media.Imaging.BitmapCacheOption]::OnLoad
-        $logoBitmap.EndInit()
-        $logoImage.Source = $logoBitmap
-        $logoImage.Height = 38
-        $logoImage.Stretch = [System.Windows.Media.Stretch]::Uniform
-        $NavLogoPanel.Children.Add($logoImage) | Out-Null
-    } catch {
-        $NavLogoPanel.Children.Add((Invoke-WinUtilAssets -Type "logo" -Size 25)) | Out-Null
-    }
-} else {
-    $NavLogoPanel.Children.Add((Invoke-WinUtilAssets -Type "logo" -Size 25)) | Out-Null
-}
+$NavLogoPanel.Children.Add((Invoke-WinUtilAssets -Type "logo" -Size 48)) | Out-Null
 
-
-if (Test-Path $customLogoPath) {
-    $sync["logorender"] = $customLogoPath
-} elseif (Test-Path "$winutildir\logo.ico") {
+if (Test-Path "$winutildir\logo.ico") {
     $sync["logorender"] = "$winutildir\logo.ico"
 } else {
     $sync["logorender"] = (Invoke-WinUtilAssets -Type "Logo" -Size 90 -Render)

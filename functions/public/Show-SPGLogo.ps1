@@ -1,14 +1,14 @@
-Function Show-CTTLogo {
+Function Show-SPGLogo {
     <#
         .SYNOPSIS
-            Displays the CTT logo in ASCII art.
+            Displays the Service PC Glew logo in ASCII art.
         .DESCRIPTION
-            This function displays the CTT logo in ASCII art format.
+            This function displays the Service PC Glew logo in ASCII art format.
         .PARAMETER None
             No parameters are required for this function.
         .EXAMPLE
-            Show-CTTLogo
-            Prints the CTT logo in ASCII art format to the console.
+            Show-SPGLogo
+            Prints the Service PC Glew logo in ASCII art format to the console.
     #>
 
     $E = [char]27

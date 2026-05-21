@@ -172,27 +172,8 @@ function Show-CustomDialog {
     $grid.Children.Add($stackPanel)
     [Windows.Controls.Grid]::SetRow($stackPanel, 0)  # Set the row to the second row (0-based index)
 
-    # Add custom logo if exists, otherwise default SVG
-    $customLogoPath = "$($sync.PSScriptRoot)\marca de agua.png"
-    if (Test-Path $customLogoPath) {
-        try {
-            $logoImage = New-Object System.Windows.Controls.Image
-            $logoBitmap = New-Object System.Windows.Media.Imaging.BitmapImage
-            $logoBitmap.BeginInit()
-            $logoBitmap.UriSource = [Uri]$customLogoPath
-            $logoBitmap.CacheOption = [Windows.Media.Imaging.BitmapCacheOption]::OnLoad
-            $logoBitmap.EndInit()
-            $logoImage.Source = $logoBitmap
-            # Make the logo slightly larger in dialogs so it looks proportionate
-            $logoImage.Height = $LogoSize * 1.5
-            $logoImage.Stretch = [System.Windows.Media.Stretch]::Uniform
-            $stackPanel.Children.Add($logoImage) | Out-Null
-        } catch {
-            $stackPanel.Children.Add((Invoke-WinUtilAssets -Type "logo" -Size $LogoSize)) | Out-Null
-        }
-    } else {
-        $stackPanel.Children.Add((Invoke-WinUtilAssets -Type "logo" -Size $LogoSize)) | Out-Null
-    }
+    # Add CTT vector logo
+    $stackPanel.Children.Add((Invoke-WinUtilAssets -Type "logo" -Size $LogoSize)) | Out-Null
 
     # Add "Service PC Glew" text
     $winutilTextBlock = New-Object Windows.Controls.TextBlock
