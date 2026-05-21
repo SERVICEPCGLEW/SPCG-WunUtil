@@ -20,19 +20,17 @@ Function Show-SPGLogo {
     $MostrarLogoCompleto = $true
 
     if ($MostrarLogoCompleto) {
-        $line1 = "${orange}  ____                  _            ____   ____    ____ _                  ${white}.---------.${reset}"
-        $line2 = "${orange} / ___|  ___ _ ____   _(_) ___ ___  |  _ \ / ___|  / ___| | _____      __   ${white}|.-------.|${reset}"
-        $line3 = "${orange} \___ \ / _ \ '__\ \ / / |/ __/ _ \ | |_) | |     | |  _| |/ _ \ \ /\ / /   ${white}||       ||${reset}"
-        $line4 = "${orange}  ___) |  __/ |   \ V /| | (_|  __/ |  __/| |___  | |_| | |  __/\ V  V /    ${white}`"-------'|${reset}"
-        $line5 = "${orange} |____/ \___|_|    \_/ |_|\___\___| |_|    \____|  \____|_|\___| \_/\_/   ${white}.-^---------^-.${reset}"
-        $line6 = "${orange}                                                                          ${white}`"-------------'${reset}"
+        $line1 = "${orange}  ____                  _            ____   ____    ____ _                  ${reset}"
+        $line2 = "${orange} / ___|  ___ _ ____   _(_) ___ ___  |  _ \ / ___|  / ___| | _____      __   ${reset}"
+        $line3 = "${orange} \___ \ / _ \ '__\ \ / / |/ __/ _ \ | |_) | |     | |  _| |/ _ \ \ /\ / /   ${reset}"
+        $line4 = "${orange}  ___) |  __/ |   \ V /| | (_|  __/ |  __/| |___  | |_| | |  __/\ V  V /    ${reset}"
+        $line5 = "${orange} |____/ \___|_|    \_/ |_|\___\___| |_|    \____|  \____|_|\___| \_/\_/   ${reset}"
 
         Write-Host $line1
         Write-Host $line2
         Write-Host $line3
         Write-Host $line4
         Write-Host $line5
-        Write-Host $line6
     }
 
     Write-Host ""

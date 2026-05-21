@@ -323,6 +323,11 @@ function Invoke-WPFUIElements {
                             $baseWidth = [int]$entryInfo.ButtonWidth
                             $button.Width = [math]::Max($baseWidth, 350)
                         }
+
+                        if ($entryInfo.Name -eq "WPFGetInstalled") {
+                            $button.SetResourceReference([Windows.Controls.Control]::ForegroundProperty, "LabelboxForegroundColor")
+                        }
+
                         [System.Windows.Automation.AutomationProperties]::SetName($button, $entryInfo.Content)
                         $itemsControl.Items.Add($button) | Out-Null
 
