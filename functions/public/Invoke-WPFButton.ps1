@@ -1,4 +1,4 @@
-﻿function Invoke-WPFButton {
+function Invoke-WPFButton {
 
     <#
 
@@ -437,6 +437,9 @@ pause >nul
         }
         "WPFBulkCrapUninstallerInstall" {
             Start-Process powershell -ArgumentList "-NoExit", "-Command", "winget install -e --id Klocman.BulkCrapUninstaller"
+        }
+        "WPFDriverBooster" {
+            Invoke-WPFDriverBooster
         }
         "WPFWebAppMercadoPago" {
             & $CreatePWA -Name "Mercado Pago" -Url "https://www.mercadopago.com.ar/" -IconUrl "https://www.mercadopago.com.ar/favicon.ico"

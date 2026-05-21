@@ -115,5 +115,12 @@
         "Type": "Button",
         "Order": "1",
         "Description": "Instalación y despliegue de Office con limpieza profunda del sistema"
+    },
+    "WPFDriverBooster": {
+        "Content": "Driver Booster.7z",
+        "Category": "zzzz__Drivers",
+        "Type": "Button",
+        "Order": "1",
+        "Description": "Descarga automáticamente Driver Booster en tu Escritorio desde Google Drive"
     }
 }

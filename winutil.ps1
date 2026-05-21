@@ -3,7 +3,7 @@
     Author         : Service PC Glew @servicepcglew
     Runspace Author: @DeveloperDurp
     GitHub         : https://github.com/servicepcglew
-    Version        : 26.05.20
+    Version        : 26.05.21
 #>
 
 param (
@@ -70,7 +70,7 @@ Add-Type -AssemblyName System.Windows.Forms
 # Variable to sync between runspaces
 $sync = [Hashtable]::Synchronized(@{})
 $sync.PSScriptRoot = $PSScriptRoot
-$sync.version = "26.05.20"
+$sync.version = "26.05.21"
 $sync.configs = @{}
 $sync.Buttons = [System.Collections.Generic.List[PSObject]]::new()
 $sync.preferences = @{}
@@ -4644,6 +4644,9 @@ pause >nul
         "WPFBulkCrapUninstallerInstall" {
             Start-Process powershell -ArgumentList "-NoExit", "-Command", "winget install -e --id Klocman.BulkCrapUninstaller"
         }
+        "WPFDriverBooster" {
+            Invoke-WPFDriverBooster
+        }
         "WPFWebAppMercadoPago" {
             & $CreatePWA -Name "Mercado Pago" -Url "https://www.mercadopago.com.ar/" -IconUrl "https://www.mercadopago.com.ar/favicon.ico"
         }
@@ -6175,7 +6178,7 @@ function Invoke-WPFUIElements {
         foreach ($category in ($organizedData[$panelKey].Keys | Sort-Object)) {
             $count++
 
-            if ($category -eq "z__Activaciones" -or $category -eq "zz__Desinstalaciones" -or $category -eq "zzz__Microsoft Office") {
+            if ($category -eq "z__Activaciones") {
                 $separator = New-Object Windows.Controls.Separator
                 $separator.Height = 2
                 $separator.Margin = "0,15,0,15"
@@ -6838,6 +6841,67 @@ Function Show-CTTLogo {
     Write-Host "$orange====$($white)Service PC Glew$orange=====$reset"
     Write-Host "$orange=====$($white)Herramientas de Windows$orange=====$reset"
     Write-Host "${orange}https://servicepcglew.pages.dev/$reset"
+}
+function Invoke-WPFDriverBooster {
+    [OutputType([void])]
+    param()
+
+    # El script que se ejecutará como Administrador en una nueva ventana de PowerShell
+    $ScriptContent = @'
+# 0. Configurar protocolo TLS seguro y desactivar barra de progreso para descarga ultra rápida
+[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12
+$ProgressPreference = 'SilentlyContinue'
+
+# 1. Definir el ID del archivo de Google Drive
+$fileId = "1eeEe3yylzdxvT8d_2GXO2t5n4wbj3yrp"
+
+# 2. Definir las rutas en el Escritorio
+$desktopPath = [Environment]::GetFolderPath("Desktop")
+$filePath = Join-Path $desktopPath "Driver Booster.7z"
+$downloadUrl = "https://docs.google.com/uc?export=download&id=$fileId"
+
+Write-Host "Descargando Driver Booster.7z en tu Escritorio de forma ultra rápida..." -ForegroundColor Cyan
+
+try {
+    # Hacemos la primera petición guardando la sesión para manejar la advertencia de virus de Google Drive
+    Invoke-WebRequest -Uri $downloadUrl -OutFile $filePath -UserAgent "Mozilla/5.0" -SessionVariable mySession -ErrorAction Stop
+
+    # Si es menor a 100 KB, es muy probable que sea la página de confirmación/error de Google Drive
+    if ((Get-Item $filePath).Length -lt 100000) {
+        $content = Get-Content $filePath -Raw -ErrorAction SilentlyContinue
+        $confirmToken = ""
+        
+        if ($content -match 'confirm=([a-zA-Z0-9_]+)') {
+            $confirmToken = $Matches[1]
+        } elseif ($content -match 'name="confirm"\s+value="([^"]+)"') {
+            $confirmToken = $Matches[1]
+        } elseif ($content -match 'value="([^"]+)"\s+name="confirm"') {
+            $confirmToken = $Matches[1]
+        }
+
+        if ($confirmToken) {
+            $confirmUrl = "https://drive.usercontent.google.com/download?export=download&confirm=$confirmToken&id=$fileId"
+            Write-Host "Confirmando y completando descarga del archivo..." -ForegroundColor Yellow
+            Invoke-WebRequest -Uri $confirmUrl -OutFile $filePath -UserAgent "Mozilla/5.0" -WebSession $mySession -ErrorAction Stop
+        }
+    }
+
+    # Colores personalizados naranja de Service PC Glew (#FF6A00) para el mensaje de éxito
+    $E = [char]27
+    Write-Host ""
+    Write-Host "$E[38;2;255;106;0m¡Listo! El archivo Driver Booster.7z (22.7 MB) ha sido descargado correctamente en tu Escritorio.$E[0m"
+    Write-Host ""
+} catch {
+    Write-Host "Error al descargar: $_" -ForegroundColor Red
+}
+
+Read-Host "Presiona Enter para continuar..."
+'@
+
+    # Guardar en un archivo temporal y ejecutarlo como Administrador
+    $TempFile = Join-Path $env:TEMP "download-driverbooster.ps1"
+    $ScriptContent | Out-File -FilePath $TempFile -Force -Encoding utf8
+    Start-Process powershell -ArgumentList "-NoExit", "-ExecutionPolicy Bypass", "-File `"$TempFile`"" -Verb RunAs
 }
 $sync.configs.applications = @'
 {
@@ -8661,7 +8725,14 @@ $sync.configs.appnavigation = @'
                            "Type":  "Button",
                            "Order":  "1",
                            "Description":  "Instalación y despliegue de Office con limpieza profunda del sistema"
-                       }
+                       },
+    "WPFDriverBooster":  {
+                             "Content":  "Driver Booster.7z",
+                             "Category":  "zzzz__Drivers",
+                             "Type":  "Button",
+                             "Order":  "1",
+                             "Description":  "Descarga automáticamente Driver Booster en tu Escritorio desde Google Drive"
+                         }
 }
 '@ | ConvertFrom-Json
 $sync.configs.dns = @'

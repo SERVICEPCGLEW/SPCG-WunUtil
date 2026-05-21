@@ -136,7 +136,7 @@ function Invoke-WPFUIElements {
         foreach ($category in ($organizedData[$panelKey].Keys | Sort-Object)) {
             $count++
 
-            if ($category -eq "z__Activaciones" -or $category -eq "zz__Desinstalaciones" -or $category -eq "zzz__Microsoft Office") {
+            if ($category -eq "z__Activaciones") {
                 $separator = New-Object Windows.Controls.Separator
                 $separator.Height = 2
                 $separator.Margin = "0,15,0,15"
