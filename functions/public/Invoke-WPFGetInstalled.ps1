@@ -46,7 +46,7 @@ function Invoke-WPFGetInstalled {
             }
         })
 
-        Write-Host "Done..."
+        Write-Host "Done..." -ForegroundColor Green
         $sync.ProcessRunning = $false
         Invoke-WPFUIThread -ScriptBlock { Set-WinUtilTaskbaritem -state "None" }
     }

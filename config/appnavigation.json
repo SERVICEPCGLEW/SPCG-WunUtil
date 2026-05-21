@@ -6,20 +6,6 @@
         "Order": "1",
         "Description": "Instala o actualiza las aplicaciones seleccionadas"
     },
-    "WPFUninstall": {
-        "Content": "Desinstalar Aplicaciones",
-        "Category": "____Acciones",
-        "Type": "Button",
-        "Order": "2",
-        "Description": "Desinstala las aplicaciones seleccionadas"
-    },
-    "WPFInstallUpgrade": {
-        "Content": "Actualizar todas las Aplicaciones",
-        "Category": "____Acciones",
-        "Type": "Button",
-        "Order": "3",
-        "Description": "Actualiza todas las aplicaciones a la última versión"
-    },
     "WingetRadioButton": {
         "Content": "WinGet",
         "Category": "__Gestor de Paquetes",
@@ -101,13 +87,6 @@
         "Type": "Button",
         "Order": "2",
         "Description": "Descarga y extrae la última versión portable de Bulk Crap Uninstaller en tu Escritorio"
-    },
-    "WPFBulkCrapUninstallerInstall": {
-        "Content": "Bulk-Crap-Uninstaller (instalar)",
-        "Category": "zz__Desinstalaciones",
-        "Type": "Button",
-        "Order": "1",
-        "Description": "Instala Bulk Crap Uninstaller en tu sistema usando Winget"
     },
     "WPFAutoYAOCTRI": {
         "Content": "Auto YAOCTRI",

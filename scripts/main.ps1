@@ -383,10 +383,10 @@ $sync["Form"].Add_ContentRendered({
         $sync.WPFTab1BT.ToolTip = "Internet connection required for installing applications"
 
         # Disable install-related buttons
-        $sync.WPFInstall.IsEnabled = $false
-        $sync.WPFUninstall.IsEnabled = $false
-        $sync.WPFInstallUpgrade.IsEnabled = $false
-        $sync.WPFGetInstalled.IsEnabled = $false
+        if ($sync.WPFInstall) { $sync.WPFInstall.IsEnabled = $false }
+        if ($sync.WPFUninstall) { $sync.WPFUninstall.IsEnabled = $false }
+        if ($sync.WPFInstallUpgrade) { $sync.WPFInstallUpgrade.IsEnabled = $false }
+        if ($sync.WPFGetInstalled) { $sync.WPFGetInstalled.IsEnabled = $false }
 
         # Show offline indicator
         Write-Host "Offline mode detected - Install tab disabled" -ForegroundColor Yellow

@@ -30,5 +30,5 @@ function Invoke-WinUtilAutoRun {
         BusyWait
     }
 
-    Write-Host "Done."
+    Write-Host "Done." -ForegroundColor Green
 }

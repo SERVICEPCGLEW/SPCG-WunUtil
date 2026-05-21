@@ -28,14 +28,92 @@ Function Invoke-WinUtilCurrentSystem {
 
         $originalEncoding = [Console]::OutputEncoding
         [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
-        $Sync.InstalledPrograms = winget list -s winget | Select-Object -skip 3 | ConvertFrom-String -PropertyNames "Name", "Id", "Version", "Available" -Delimiter '\s{2,}'
+        $rawOutput = winget list
         [Console]::OutputEncoding = $originalEncoding
+
+        $sepIndex = -1
+        for ($i = 0; $i -lt $rawOutput.Count; $i++) {
+            if ($rawOutput[$i] -match '^[- ]+$' -and $rawOutput[$i] -match '-{10,}') {
+                $sepIndex = $i
+                break
+            }
+        }
+
+        if ($sepIndex -gt 0) {
+            $headerLine = $rawOutput[$sepIndex - 1]
+            $matches = [regex]::Matches($headerLine, "\S+")
+            $cols = @()
+            foreach ($m in $matches) {
+                $cols += [PSCustomObject]@{
+                    Name  = $m.Value
+                    Index = $m.Index
+                }
+            }
+            for ($c = 0; $c -lt $cols.Count; $c++) {
+                if ($c -lt $cols.Count - 1) {
+                    $cols[$c] | Add-Member -NotePropertyName Length -NotePropertyValue ($cols[$c+1].Index - $cols[$c].Index)
+                } else {
+                    $cols[$c] | Add-Member -NotePropertyName Length -NotePropertyValue -1
+                }
+            }
+
+            $Sync.InstalledPrograms = @()
+            for ($i = $sepIndex + 1; $i -lt $rawOutput.Count; $i++) {
+                $line = $rawOutput[$i]
+                if ([string]::IsNullOrWhiteSpace($line) -or $line -match '^<') {
+                    continue
+                }
+                $obj = [PSCustomObject]@{}
+                for ($c = 0; $c -lt $cols.Count; $c++) {
+                    $idx = $cols[$c].Index
+                    $len = $cols[$c].Length
+                    if ($idx -ge $line.Length) {
+                        $val = ""
+                    } elseif ($len -eq -1) {
+                        $val = $line.Substring($idx).Trim()
+                    } else {
+                        $val = $line.Substring($idx, [Math]::Min($len, $line.Length - $idx)).Trim()
+                    }
+
+                    $propName = switch ($c) {
+                        0 { "Name" }
+                        1 { "Id" }
+                        2 { "Version" }
+                        3 { if ($cols.Count -eq 4) { "Source" } else { "Available" } }
+                        4 { "Source" }
+                    }
+                    $obj | Add-Member -NotePropertyName $propName -NotePropertyValue $val
+                }
+                $Sync.InstalledPrograms += $obj
+            }
+        } else {
+            $Sync.InstalledPrograms = @()
+        }
 
         $filter = Get-WinUtilVariables -Type Checkbox | Where-Object {$psitem -like "WPFInstall*"}
         $sync.GetEnumerator() | Where-Object {$psitem.Key -in $filter} | ForEach-Object {
-            $dependencies = @($sync.configs.applications.$($psitem.Key).winget -split ";")
+            $appKey = $psitem.Key
+            $appConfig = $sync.configs.applications.$appKey
+            $dependencies = @($appConfig.winget -split ";")
+            $dep = $dependencies[-1]
+            $content = $appConfig.content
 
-            if ($dependencies[-1] -in $sync.InstalledPrograms.Id) {
+            $isInstalled = $false
+            if ($dep) {
+                $isInstalled = ($sync.InstalledPrograms | Where-Object {
+                    $_.Id -eq $dep -or 
+                    $_.Id -like "$dep.*" -or
+                    ($dep.Contains(".") -and $_.Id -like "*$($dep.Split('.')[-1])*") -or
+                    $_.Name -eq $content -or
+                    ($content -and $content.Length -ge 4 -and $_.Name.Replace(" ", "").ToLower().Contains($content.Replace(" ", "").ToLower())) -or
+                    ($content -and $content.Length -ge 4 -and $content.Replace(" ", "").ToLower().Contains($_.Name.Replace(" ", "").ToLower())) -or
+                    ($appKey -eq "WPFInstalladobe" -and $_.Name -like "*Adobe Acrobat*") -or
+                    ($dep -eq "9NKSQGP7F2NH" -and $_.Id -like "*5319275A.WhatsAppDesktop*") -or
+                    ($dep -eq "9NBDXK71NK08" -and $_.Id -like "*5319275A.51895FA4EA97F*")
+                }) -ne $null
+            }
+
+            if ($isInstalled) {
                 Write-Output $psitem.name
             }
         }

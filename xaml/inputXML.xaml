@@ -118,7 +118,8 @@
                         </Grid>
                         <ContentPresenter Content="{TemplateBinding Content}"
                                         VerticalAlignment="Center"
-                                        HorizontalAlignment="Left"/>
+                                        HorizontalAlignment="Left"
+                                        IsHitTestVisible="False"/>
                     </StackPanel>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsChecked" Value="True">
@@ -564,7 +565,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="CheckBox">
-                        <Grid Background="{TemplateBinding Background}" Margin="{DynamicResource CheckBoxMargin}">
+                        <Grid Background="Transparent" Margin="{DynamicResource CheckBoxMargin}">
                             <BulletDecorator Background="Transparent">
                                 <BulletDecorator.Bullet>
                                     <Grid Width="{DynamicResource CheckBoxBulletDecoratorSize}" Height="{DynamicResource CheckBoxBulletDecoratorSize}">
@@ -593,7 +594,8 @@
                                 <ContentPresenter Margin="4,0,0,0"
                                                   HorizontalAlignment="Left"
                                                   VerticalAlignment="Center"
-                                                  RecognizesAccessKey="True"/>
+                                                  RecognizesAccessKey="True"
+                                                  IsHitTestVisible="False"/>
                             </BulletDecorator>
                         </Grid>
                         <ControlTemplate.Triggers>

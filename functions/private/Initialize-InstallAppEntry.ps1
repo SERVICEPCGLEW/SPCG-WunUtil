@@ -18,10 +18,6 @@ function Initialize-InstallAppEntry {
         $border.Style = $sync.Form.Resources.AppEntryBorderStyle
         $border.Tag = $appKey
         $border.ToolTip = $Apps.$appKey.description
-        $border.Add_MouseLeftButtonUp({
-            $childCheckbox = ($this.Child | Where-Object {$_.Template.TargetType -eq [System.Windows.Controls.Checkbox]})[0]
-            $childCheckBox.isChecked = -not $childCheckbox.IsChecked
-        })
         $border.Add_MouseEnter({
             if (($sync.$($this.Tag).IsChecked) -eq $false) {
                 $this.SetResourceReference([Windows.Controls.Control]::BackgroundProperty, "AppInstallHighlightedColor")

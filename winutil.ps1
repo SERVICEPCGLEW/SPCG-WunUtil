@@ -701,10 +701,6 @@ function Initialize-InstallAppEntry {
         $border.Style = $sync.Form.Resources.AppEntryBorderStyle
         $border.Tag = $appKey
         $border.ToolTip = $Apps.$appKey.description
-        $border.Add_MouseLeftButtonUp({
-            $childCheckbox = ($this.Child | Where-Object {$_.Template.TargetType -eq [System.Windows.Controls.Checkbox]})[0]
-            $childCheckBox.isChecked = -not $childCheckbox.IsChecked
-        })
         $border.Add_MouseEnter({
             if (($sync.$($this.Tag).IsChecked) -eq $false) {
                 $this.SetResourceReference([Windows.Controls.Control]::BackgroundProperty, "AppInstallHighlightedColor")
@@ -902,10 +898,100 @@ Function Install-WinUtilProgramWinget {
         [string[]]$Programs
     )
 
+    # Helper to print lines with progress bar coloring (DarkYellow/Orange) override
+    function Write-WinUtilLine {
+        param (
+            [string]$Line,
+            [string]$Color
+        )
+        if ($Line) {
+            if ($Line -match "█|░|(\d+%)") {
+                Write-Host $Line -ForegroundColor DarkYellow
+            } elseif ($Color) {
+                Write-Host $Line -ForegroundColor $Color
+            } else {
+                Write-Host $Line
+            }
+        }
+    }
+
     if ($Action -eq 'Install') {
-        Start-Process -FilePath winget -ArgumentList "install $Programs --accept-package-agreements --source winget --silent" -NoNewWindow -Wait
+        foreach ($program in $Programs) {
+            if ($program -eq "9NKSQGP7F2NH" -or $program -eq "9NBDXK71NK08") {
+                Write-Host "Instalando '$program' desde la Microsoft Store..."
+                $output = winget install $program --accept-package-agreements --accept-source-agreements --source msstore --silent 2>&1
+            } else {
+                Write-Host "Instalando '$program' desde winget..."
+                $output = winget install $program --accept-package-agreements --accept-source-agreements --source winget --silent 2>&1
+            }
+
+            $isAlreadyInstalled = $false
+            $hasSuccessKeywords = $false
+            foreach ($line in $output) {
+                if ($line -match "ya está instalado|ya instalado|ninguna actualizaci|no hay versiones m.s recientes|already installed|no upgrade available|no newer package version") {
+                    $isAlreadyInstalled = $true
+                }
+                if ($line -match "instalado correctamente|actualizado correctamente|successfully installed|successfully upgraded|exitosamente|iniciado correctamente") {
+                    $hasSuccessKeywords = $true
+                }
+            }
+
+            if ($isAlreadyInstalled) {
+                foreach ($line in $output) {
+                    Write-WinUtilLine -Line $line
+                }
+            } elseif ($LASTEXITCODE -eq 0 -or $hasSuccessKeywords) {
+                foreach ($line in $output) {
+                    Write-WinUtilLine -Line $line -Color "Green"
+                }
+            } else {
+                foreach ($line in $output) {
+                    Write-WinUtilLine -Line $line -Color "Red"
+                }
+            }
+        }
     } else {
-        Start-Process -FilePath winget -ArgumentList "uninstall $Programs --source winget --silent" -NoNewWindow -Wait
+        # For each program, detect if it was installed from msstore or winget and use the correct source
+        foreach ($program in $Programs) {
+            $installedEntry = $Sync.InstalledPrograms | Where-Object { 
+                $_.Id -eq $program -or 
+                ($program -eq "9NKSQGP7F2NH" -and $_.Id -like "*5319275A.WhatsAppDesktop*") -or 
+                ($program -eq "9NBDXK71NK08" -and $_.Id -like "*5319275A.51895FA4EA97F*") 
+            } | Select-Object -First 1
+
+            if ($installedEntry -and ($installedEntry.Source -eq "msstore" -or $installedEntry.Id -like "MSIX\*")) {
+                Write-Host "Desinstalando '$program' desde la Microsoft Store..."
+                $output = winget uninstall $program --source msstore --silent 2>&1
+            } else {
+                Write-Host "Desinstalando '$program' desde winget..."
+                $output = winget uninstall $program --source winget --silent 2>&1
+            }
+
+            $isAlreadyUninstalled = $false
+            $hasSuccessKeywords = $false
+            foreach ($line in $output) {
+                if ($line -match "no se encontró ningún paquete instalado|no se encontr. ning.n paquete instalado|not found|not installed") {
+                    $isAlreadyUninstalled = $true
+                }
+                if ($line -match "desinstalado correctamente|successfully uninstalled|exitosamente|eliminado correctamente") {
+                    $hasSuccessKeywords = $true
+                }
+            }
+
+            if ($isAlreadyUninstalled) {
+                foreach ($line in $output) {
+                    Write-WinUtilLine -Line $line
+                }
+            } elseif ($LASTEXITCODE -eq 0 -or $hasSuccessKeywords) {
+                foreach ($line in $output) {
+                    Write-WinUtilLine -Line $line -Color "Green"
+                }
+            } else {
+                foreach ($line in $output) {
+                    Write-WinUtilLine -Line $line -Color "Red"
+                }
+            }
+        }
     }
 }
 function Install-WinUtilWinget {
@@ -1134,14 +1220,92 @@ Function Invoke-WinUtilCurrentSystem {
 
         $originalEncoding = [Console]::OutputEncoding
         [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
-        $Sync.InstalledPrograms = winget list -s winget | Select-Object -skip 3 | ConvertFrom-String -PropertyNames "Name", "Id", "Version", "Available" -Delimiter '\s{2,}'
+        $rawOutput = winget list
         [Console]::OutputEncoding = $originalEncoding
+
+        $sepIndex = -1
+        for ($i = 0; $i -lt $rawOutput.Count; $i++) {
+            if ($rawOutput[$i] -match '^[- ]+$' -and $rawOutput[$i] -match '-{10,}') {
+                $sepIndex = $i
+                break
+            }
+        }
+
+        if ($sepIndex -gt 0) {
+            $headerLine = $rawOutput[$sepIndex - 1]
+            $matches = [regex]::Matches($headerLine, "\S+")
+            $cols = @()
+            foreach ($m in $matches) {
+                $cols += [PSCustomObject]@{
+                    Name  = $m.Value
+                    Index = $m.Index
+                }
+            }
+            for ($c = 0; $c -lt $cols.Count; $c++) {
+                if ($c -lt $cols.Count - 1) {
+                    $cols[$c] | Add-Member -NotePropertyName Length -NotePropertyValue ($cols[$c+1].Index - $cols[$c].Index)
+                } else {
+                    $cols[$c] | Add-Member -NotePropertyName Length -NotePropertyValue -1
+                }
+            }
+
+            $Sync.InstalledPrograms = @()
+            for ($i = $sepIndex + 1; $i -lt $rawOutput.Count; $i++) {
+                $line = $rawOutput[$i]
+                if ([string]::IsNullOrWhiteSpace($line) -or $line -match '^<') {
+                    continue
+                }
+                $obj = [PSCustomObject]@{}
+                for ($c = 0; $c -lt $cols.Count; $c++) {
+                    $idx = $cols[$c].Index
+                    $len = $cols[$c].Length
+                    if ($idx -ge $line.Length) {
+                        $val = ""
+                    } elseif ($len -eq -1) {
+                        $val = $line.Substring($idx).Trim()
+                    } else {
+                        $val = $line.Substring($idx, [Math]::Min($len, $line.Length - $idx)).Trim()
+                    }
+
+                    $propName = switch ($c) {
+                        0 { "Name" }
+                        1 { "Id" }
+                        2 { "Version" }
+                        3 { if ($cols.Count -eq 4) { "Source" } else { "Available" } }
+                        4 { "Source" }
+                    }
+                    $obj | Add-Member -NotePropertyName $propName -NotePropertyValue $val
+                }
+                $Sync.InstalledPrograms += $obj
+            }
+        } else {
+            $Sync.InstalledPrograms = @()
+        }
 
         $filter = Get-WinUtilVariables -Type Checkbox | Where-Object {$psitem -like "WPFInstall*"}
         $sync.GetEnumerator() | Where-Object {$psitem.Key -in $filter} | ForEach-Object {
-            $dependencies = @($sync.configs.applications.$($psitem.Key).winget -split ";")
+            $appKey = $psitem.Key
+            $appConfig = $sync.configs.applications.$appKey
+            $dependencies = @($appConfig.winget -split ";")
+            $dep = $dependencies[-1]
+            $content = $appConfig.content
 
-            if ($dependencies[-1] -in $sync.InstalledPrograms.Id) {
+            $isInstalled = $false
+            if ($dep) {
+                $isInstalled = ($sync.InstalledPrograms | Where-Object {
+                    $_.Id -eq $dep -or 
+                    $_.Id -like "$dep.*" -or
+                    ($dep.Contains(".") -and $_.Id -like "*$($dep.Split('.')[-1])*") -or
+                    $_.Name -eq $content -or
+                    ($content -and $content.Length -ge 4 -and $_.Name.Replace(" ", "").ToLower().Contains($content.Replace(" ", "").ToLower())) -or
+                    ($content -and $content.Length -ge 4 -and $content.Replace(" ", "").ToLower().Contains($_.Name.Replace(" ", "").ToLower())) -or
+                    ($appKey -eq "WPFInstalladobe" -and $_.Name -like "*Adobe Acrobat*") -or
+                    ($dep -eq "9NKSQGP7F2NH" -and $_.Id -like "*5319275A.WhatsAppDesktop*") -or
+                    ($dep -eq "9NBDXK71NK08" -and $_.Id -like "*5319275A.51895FA4EA97F*")
+                }) -ne $null
+            }
+
+            if ($isInstalled) {
                 Write-Output $psitem.name
             }
         }
@@ -4114,7 +4278,7 @@ function Invoke-WinUtilAutoRun {
         BusyWait
     }
 
-    Write-Host "Done."
+    Write-Host "Done." -ForegroundColor Green
 }
 function Invoke-WinUtilRemoveEdge {
   New-Item -Path "$Env:SystemRoot\SystemApps\Microsoft.MicrosoftEdge_8wekyb3d8bbwe\MicrosoftEdge.exe" -Force
@@ -5254,7 +5418,7 @@ function Invoke-WPFGetInstalled {
             }
         })
 
-        Write-Host "Done..."
+        Write-Host "Done..." -ForegroundColor Green
         $sync.ProcessRunning = $false
         Invoke-WPFUIThread -ScriptBlock { Set-WinUtilTaskbaritem -state "None" }
     }
@@ -6835,7 +6999,7 @@ Function Show-SPGLogo {
     }
 
     Write-Host ""
-    Write-Host "$orange====$($white)Service PC Glew$orange=====$reset"
+    Write-Host "$orange====$($white)Service PC Glew | Servicio Técnico Informático$orange=====$reset"
     Write-Host "$orange=====$($white)Herramientas de Windows$orange=====$reset"
     Write-Host "${orange}https://servicepcglew.pages.dev/$reset"
 }
@@ -7075,6 +7239,33 @@ $sync.configs.applications = @'
                              "winget":  "Anysphere.Cursor",
                              "foss":  false
                          },
+    "WPFInstallantigravityide":  {
+                                     "category":  "Desarrollo",
+                                     "choco":  "na",
+                                     "content":  "Antigravity IDE",
+                                     "description":  "Potente entorno de desarrollo y asistencia impulsado por los agentes de inteligencia artificial de Google DeepMind.",
+                                     "link":  "https://deepmind.google/",
+                                     "winget":  "Google.Antigravity",
+                                     "foss":  false
+                                 },
+    "WPFInstallantigravity2":  {
+                                   "category":  "Desarrollo",
+                                   "choco":  "na",
+                                   "content":  "Antigravity 2.0",
+                                   "description":  "La próxima generación del entorno de desarrollo impulsado por inteligencia artificial.",
+                                   "link":  "https://deepmind.google/",
+                                   "winget":  "Google.Antigravity",
+                                   "foss":  false
+                               },
+    "WPFInstallcloudflare":  {
+                                 "category":  "Desarrollo",
+                                 "choco":  "na",
+                                 "content":  "Cloudflared",
+                                 "description":  "Herramienta de desarrollo de Cloudflare para crear túneles seguros (Zero Trust) y exponer aplicaciones locales a internet sin abrir puertos.",
+                                 "link":  "https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/",
+                                 "winget":  "Cloudflare.cloudflared",
+                                 "foss":  true
+                             },
     "WPFInstallddu":  {
                           "category":  "Herramientas Profesionales",
                           "choco":  "ddu",
@@ -7093,6 +7284,24 @@ $sync.configs.applications = @'
                               "winget":  "Discord.Discord",
                               "foss":  false
                           },
+    "WPFInstallwhatsapp":  {
+                               "category":  "Comunicaciones",
+                               "choco":  "whatsapp",
+                               "content":  "WhatsApp",
+                               "description":  "WhatsApp Messenger de Meta es una aplicación de mensajería GRATUITA y videollamadas. Es utilizada por más de 2 mil millones de personas.",
+                               "link":  "https://www.whatsapp.com/",
+                               "winget":  "9NKSQGP7F2NH",
+                               "foss":  false
+                           },
+    "WPFInstallwhatsappbeta":  {
+                                   "category":  "Comunicaciones",
+                                   "choco":  "na",
+                                   "content":  "WhatsApp Beta",
+                                   "description":  "WhatsApp Beta ofrece acceso anticipado a nuevas funciones de WhatsApp antes de que se lancen al público.",
+                                   "link":  "https://www.whatsapp.com/",
+                                   "winget":  "9NBDXK71NK08",
+                                   "foss":  false
+                               },
     "WPFInstalldismtools":  {
                                 "category":  "Herramientas de Microsoft",
                                 "choco":  "dismtools",
@@ -8540,7 +8749,70 @@ $sync.configs.applications = @'
                           "content":  "Lua",
                           "link":  "https://github.com/rjpcomputing/luaforwindows",
                           "foss":  true
-                      }
+                      },
+    "WPFInstallspotify":  {
+                              "category":  "Herramientas Multimedia",
+                              "choco":  "spotify",
+                              "content":  "Spotify",
+                              "description":  "Spotify es un servicio de música digital, pódcast y vídeos que te da acceso a millones de canciones y a otros contenidos.",
+                              "link":  "https://www.spotify.com/",
+                              "winget":  "Spotify.Spotify",
+                              "foss":  false
+                          },
+    "WPFInstalladobeexpressphotos":  {
+                                         "category":  "Herramientas Multimedia",
+                                         "choco":  "na",
+                                         "content":  "Adobe Express Photos",
+                                         "description":  "Adobe Express Photos (anteriormente Photoshop Express) ofrece edición rápida y sencilla de fotos, collage de fotos y retoque de imágenes.",
+                                         "link":  "https://apps.microsoft.com/detail/9WZDNCRFJ27N",
+                                         "winget":  "9WZDNCRFJ27N",
+                                         "foss":  false
+                                     },
+    "WPFInstallpinterest":  {
+                                "category":  "Herramientas Multimedia",
+                                "choco":  "na",
+                                "content":  "Pinterest",
+                                "description":  "Pinterest es una plataforma de descubrimiento visual para encontrar ideas como recetas, inspiración para el hogar y de estilo.",
+                                "link":  "https://apps.microsoft.com/detail/9MW29S155D3W",
+                                "winget":  "9MW29S155D3W",
+                                "foss":  false
+                            },
+    "WPFInstalldisneyplus":  {
+                                 "category":  "Herramientas Multimedia",
+                                 "choco":  "na",
+                                 "content":  "Disney+",
+                                 "description":  "Disney+ es la plataforma de transmisión de tus historias favoritas de Disney, Pixar, Marvel, Star Wars y National Geographic.",
+                                 "link":  "https://apps.microsoft.com/detail/9NXQXXLFST89",
+                                 "winget":  "9NXQXXLFST89",
+                                 "foss":  false
+                             },
+    "WPFInstallnetflix":  {
+                              "category":  "Herramientas Multimedia",
+                              "choco":  "netflix",
+                              "content":  "Netflix",
+                              "description":  "Netflix es un servicio de streaming por suscripción que permite a sus miembros ver series y películas en un dispositivo con conexión a internet.",
+                              "link":  "https://apps.microsoft.com/detail/9WZDNCRFJ3TJ",
+                              "winget":  "9WZDNCRFJ3TJ",
+                              "foss":  false
+                          },
+    "WPFInstalltwitch":  {
+                             "category":  "Herramientas Multimedia",
+                             "choco":  "na",
+                             "content":  "Twitch (Streamlink GUI)",
+                             "description":  "Streamlink Twitch GUI es un cliente de escritorio de código abierto que te permite ver transmisiones de Twitch en reproductores externos de alto rendimiento.",
+                             "link":  "https://github.com/streamlink/streamlink-twitch-gui",
+                             "winget":  "Streamlink.Streamlink.TwitchGui",
+                             "foss":  true
+                         },
+    "WPFInstalloutlook":  {
+                              "category":  "Herramientas de Microsoft",
+                              "choco":  "na",
+                              "content":  "Outlook for Windows",
+                              "description":  "El nuevo Outlook para Windows es una experiencia de correo electrónico moderna y gratuita diseñada para mantener tu vida organizada y conectada.",
+                              "link":  "https://apps.microsoft.com/detail/9NRX63209R7B",
+                              "winget":  "9NRX63209R7B",
+                              "foss":  false
+                          }
 }
 '@ | ConvertFrom-Json
 $sync.configs.appnavigation = @'
@@ -8552,20 +8824,6 @@ $sync.configs.appnavigation = @'
                        "Order":  "1",
                        "Description":  "Instala o actualiza las aplicaciones seleccionadas"
                    },
-    "WPFUninstall":  {
-                         "Content":  "Desinstalar Aplicaciones",
-                         "Category":  "____Acciones",
-                         "Type":  "Button",
-                         "Order":  "2",
-                         "Description":  "Desinstala las aplicaciones seleccionadas"
-                     },
-    "WPFInstallUpgrade":  {
-                              "Content":  "Actualizar todas las Aplicaciones",
-                              "Category":  "____Acciones",
-                              "Type":  "Button",
-                              "Order":  "3",
-                              "Description":  "Actualiza todas las aplicaciones a la última versión"
-                          },
     "WingetRadioButton":  {
                               "Content":  "WinGet",
                               "Category":  "__Gestor de Paquetes",
@@ -8648,13 +8906,6 @@ $sync.configs.appnavigation = @'
                                    "Order":  "2",
                                    "Description":  "Descarga y extrae la última versión portable de Bulk Crap Uninstaller en tu Escritorio"
                                },
-    "WPFBulkCrapUninstallerInstall":  {
-                                          "Content":  "Bulk-Crap-Uninstaller (instalar)",
-                                          "Category":  "zz__Desinstalaciones",
-                                          "Type":  "Button",
-                                          "Order":  "1",
-                                          "Description":  "Instala Bulk Crap Uninstaller en tu sistema usando Winget"
-                                      },
     "WPFAutoYAOCTRI":  {
                            "Content":  "Auto YAOCTRI",
                            "Category":  "zzz__Microsoft Office",
@@ -10928,7 +11179,8 @@ $inputXML = @'
                         </Grid>
                         <ContentPresenter Content="{TemplateBinding Content}"
                                         VerticalAlignment="Center"
-                                        HorizontalAlignment="Left"/>
+                                        HorizontalAlignment="Left"
+                                        IsHitTestVisible="False"/>
                     </StackPanel>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsChecked" Value="True">
@@ -11374,7 +11626,7 @@ $inputXML = @'
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="CheckBox">
-                        <Grid Background="{TemplateBinding Background}" Margin="{DynamicResource CheckBoxMargin}">
+                        <Grid Background="Transparent" Margin="{DynamicResource CheckBoxMargin}">
                             <BulletDecorator Background="Transparent">
                                 <BulletDecorator.Bullet>
                                     <Grid Width="{DynamicResource CheckBoxBulletDecoratorSize}" Height="{DynamicResource CheckBoxBulletDecoratorSize}">
@@ -11403,7 +11655,8 @@ $inputXML = @'
                                 <ContentPresenter Margin="4,0,0,0"
                                                   HorizontalAlignment="Left"
                                                   VerticalAlignment="Center"
-                                                  RecognizesAccessKey="True"/>
+                                                  RecognizesAccessKey="True"
+                                                  IsHitTestVisible="False"/>
                             </BulletDecorator>
                         </Grid>
                         <ControlTemplate.Triggers>
@@ -13420,10 +13673,10 @@ $sync["Form"].Add_ContentRendered({
         $sync.WPFTab1BT.ToolTip = "Internet connection required for installing applications"
 
         # Disable install-related buttons
-        $sync.WPFInstall.IsEnabled = $false
-        $sync.WPFUninstall.IsEnabled = $false
-        $sync.WPFInstallUpgrade.IsEnabled = $false
-        $sync.WPFGetInstalled.IsEnabled = $false
+        if ($sync.WPFInstall) { $sync.WPFInstall.IsEnabled = $false }
+        if ($sync.WPFUninstall) { $sync.WPFUninstall.IsEnabled = $false }
+        if ($sync.WPFInstallUpgrade) { $sync.WPFInstallUpgrade.IsEnabled = $false }
+        if ($sync.WPFGetInstalled) { $sync.WPFGetInstalled.IsEnabled = $false }
 
         # Show offline indicator
         Write-Host "Offline mode detected - Install tab disabled" -ForegroundColor Yellow

@@ -233,6 +233,33 @@
         "winget": "Anysphere.Cursor",
         "foss": false
     },
+    "antigravityide": {
+        "category": "Desarrollo",
+        "choco": "na",
+        "content": "Antigravity IDE",
+        "description": "Potente entorno de desarrollo y asistencia impulsado por los agentes de inteligencia artificial de Google DeepMind.",
+        "link": "https://deepmind.google/",
+        "winget": "Google.Antigravity",
+        "foss": false
+    },
+    "antigravity2": {
+        "category": "Desarrollo",
+        "choco": "na",
+        "content": "Antigravity 2.0",
+        "description": "La próxima generación del entorno de desarrollo impulsado por inteligencia artificial.",
+        "link": "https://deepmind.google/",
+        "winget": "Google.Antigravity",
+        "foss": false
+    },
+    "cloudflare": {
+        "category": "Desarrollo",
+        "choco": "na",
+        "content": "Cloudflared",
+        "description": "Herramienta de desarrollo de Cloudflare para crear túneles seguros (Zero Trust) y exponer aplicaciones locales a internet sin abrir puertos.",
+        "link": "https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/",
+        "winget": "Cloudflare.cloudflared",
+        "foss": true
+    },
     "ddu": {
         "category": "Herramientas Profesionales",
         "choco": "ddu",
@@ -249,6 +276,24 @@
         "description": "Discord es una plataforma de comunicación con chat de voz, video y texto, diseñada para jugadores pero utilizada por muchas comunidades.",
         "link": "https://discord.com/",
         "winget": "Discord.Discord",
+        "foss": false
+    },
+    "whatsapp": {
+        "category": "Comunicaciones",
+        "choco": "whatsapp",
+        "content": "WhatsApp",
+        "description": "WhatsApp Messenger de Meta es una aplicación de mensajería GRATUITA y videollamadas. Es utilizada por más de 2 mil millones de personas.",
+        "link": "https://www.whatsapp.com/",
+        "winget": "9NKSQGP7F2NH",
+        "foss": false
+    },
+    "whatsappbeta": {
+        "category": "Comunicaciones",
+        "choco": "na",
+        "content": "WhatsApp Beta",
+        "description": "WhatsApp Beta ofrece acceso anticipado a nuevas funciones de WhatsApp antes de que se lancen al público.",
+        "link": "https://www.whatsapp.com/",
+        "winget": "9NBDXK71NK08",
         "foss": false
     },
     "dismtools": {
@@ -1698,5 +1743,68 @@
         "content": "Lua",
         "link": "https://github.com/rjpcomputing/luaforwindows",
         "foss": true
+    },
+    "spotify": {
+        "category": "Herramientas Multimedia",
+        "choco": "spotify",
+        "content": "Spotify",
+        "description": "Spotify es un servicio de música digital, pódcast y vídeos que te da acceso a millones de canciones y a otros contenidos.",
+        "link": "https://www.spotify.com/",
+        "winget": "Spotify.Spotify",
+        "foss": false
+    },
+    "adobeexpressphotos": {
+        "category": "Herramientas Multimedia",
+        "choco": "na",
+        "content": "Adobe Express Photos",
+        "description": "Adobe Express Photos (anteriormente Photoshop Express) ofrece edición rápida y sencilla de fotos, collage de fotos y retoque de imágenes.",
+        "link": "https://apps.microsoft.com/detail/9WZDNCRFJ27N",
+        "winget": "9WZDNCRFJ27N",
+        "foss": false
+    },
+    "pinterest": {
+        "category": "Herramientas Multimedia",
+        "choco": "na",
+        "content": "Pinterest",
+        "description": "Pinterest es una plataforma de descubrimiento visual para encontrar ideas como recetas, inspiración para el hogar y de estilo.",
+        "link": "https://apps.microsoft.com/detail/9MW29S155D3W",
+        "winget": "9MW29S155D3W",
+        "foss": false
+    },
+    "disneyplus": {
+        "category": "Herramientas Multimedia",
+        "choco": "na",
+        "content": "Disney+",
+        "description": "Disney+ es la plataforma de transmisión de tus historias favoritas de Disney, Pixar, Marvel, Star Wars y National Geographic.",
+        "link": "https://apps.microsoft.com/detail/9NXQXXLFST89",
+        "winget": "9NXQXXLFST89",
+        "foss": false
+    },
+    "netflix": {
+        "category": "Herramientas Multimedia",
+        "choco": "netflix",
+        "content": "Netflix",
+        "description": "Netflix es un servicio de streaming por suscripción que permite a sus miembros ver series y películas en un dispositivo con conexión a internet.",
+        "link": "https://apps.microsoft.com/detail/9WZDNCRFJ3TJ",
+        "winget": "9WZDNCRFJ3TJ",
+        "foss": false
+    },
+    "twitch": {
+        "category": "Herramientas Multimedia",
+        "choco": "na",
+        "content": "Twitch (Streamlink GUI)",
+        "description": "Streamlink Twitch GUI es un cliente de escritorio de código abierto que te permite ver transmisiones de Twitch en reproductores externos de alto rendimiento.",
+        "link": "https://github.com/streamlink/streamlink-twitch-gui",
+        "winget": "Streamlink.Streamlink.TwitchGui",
+        "foss": true
+    },
+    "outlook": {
+        "category": "Herramientas de Microsoft",
+        "choco": "na",
+        "content": "Outlook for Windows",
+        "description": "El nuevo Outlook para Windows es una experiencia de correo electrónico moderna y gratuita diseñada para mantener tu vida organizada y conectada.",
+        "link": "https://apps.microsoft.com/detail/9NRX63209R7B",
+        "winget": "9NRX63209R7B",
+        "foss": false
     }
 }

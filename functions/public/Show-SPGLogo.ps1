@@ -34,7 +34,7 @@ Function Show-SPGLogo {
     }
 
     Write-Host ""
-    Write-Host "$orange====$($white)Service PC Glew$orange=====$reset"
+    Write-Host "$orange====$($white)Service PC Glew | Servicio Técnico Informático$orange=====$reset"
     Write-Host "$orange=====$($white)Herramientas de Windows$orange=====$reset"
     Write-Host "${orange}https://servicepcglew.pages.dev/$reset"
 }
