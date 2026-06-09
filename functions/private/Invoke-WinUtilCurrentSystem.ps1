@@ -103,10 +103,10 @@ Function Invoke-WinUtilCurrentSystem {
                 $isInstalled = ($sync.InstalledPrograms | Where-Object {
                     $_.Id -eq $dep -or 
                     $_.Id -like "$dep.*" -or
-                    ($dep.Contains(".") -and $_.Id -like "*$($dep.Split('.')[-1])*") -or
+                    ($dep.Contains('.') -and $_.Id -and $_.Id.Contains('.') -and $dep -like "$($_.Id).*") -or
                     $_.Name -eq $content -or
-                    ($content -and $content.Length -ge 4 -and $_.Name.Replace(" ", "").ToLower().Contains($content.Replace(" ", "").ToLower())) -or
-                    ($content -and $content.Length -ge 4 -and $content.Replace(" ", "").ToLower().Contains($_.Name.Replace(" ", "").ToLower())) -or
+                    ($content -and $content.Length -ge 4 -and $_.Name -and $_.Name.Replace(" ", "").ToLower().Contains($content.Replace(" ", "").ToLower())) -or
+                    ($content -and $content.Length -ge 4 -and $_.Name -and $_.Name.Length -ge 4 -and $content.Replace(" ", "").ToLower().Contains($_.Name.Replace(" ", "").ToLower())) -or
                     ($appKey -eq "WPFInstalladobe" -and $_.Name -like "*Adobe Acrobat*") -or
                     ($dep -eq "9NKSQGP7F2NH" -and $_.Id -like "*5319275A.WhatsAppDesktop*") -or
                     ($dep -eq "9NBDXK71NK08" -and $_.Id -like "*5319275A.51895FA4EA97F*")

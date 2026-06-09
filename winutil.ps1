@@ -3,7 +3,7 @@
     Author         : Service PC Glew @servicepcglew
     Runspace Author: @DeveloperDurp
     GitHub         : https://github.com/servicepcglew
-    Version        : 26.06.07
+    Version        : 26.06.09
 #>
 
 param (
@@ -70,7 +70,7 @@ Add-Type -AssemblyName System.Windows.Forms
 # Variable to sync between runspaces
 $sync = [Hashtable]::Synchronized(@{})
 $sync.PSScriptRoot = $PSScriptRoot
-$sync.version = "26.06.07"
+$sync.version = "26.06.09"
 $sync.configs = @{}
 $sync.Buttons = [System.Collections.Generic.List[PSObject]]::new()
 $sync.preferences = @{}
@@ -1295,10 +1295,10 @@ Function Invoke-WinUtilCurrentSystem {
                 $isInstalled = ($sync.InstalledPrograms | Where-Object {
                     $_.Id -eq $dep -or 
                     $_.Id -like "$dep.*" -or
-                    ($dep.Contains(".") -and $_.Id -like "*$($dep.Split('.')[-1])*") -or
+                    ($dep.Contains('.') -and $_.Id -and $_.Id.Contains('.') -and $dep -like "$($_.Id).*") -or
                     $_.Name -eq $content -or
-                    ($content -and $content.Length -ge 4 -and $_.Name.Replace(" ", "").ToLower().Contains($content.Replace(" ", "").ToLower())) -or
-                    ($content -and $content.Length -ge 4 -and $content.Replace(" ", "").ToLower().Contains($_.Name.Replace(" ", "").ToLower())) -or
+                    ($content -and $content.Length -ge 4 -and $_.Name -and $_.Name.Replace(" ", "").ToLower().Contains($content.Replace(" ", "").ToLower())) -or
+                    ($content -and $content.Length -ge 4 -and $_.Name -and $_.Name.Length -ge 4 -and $content.Replace(" ", "").ToLower().Contains($_.Name.Replace(" ", "").ToLower())) -or
                     ($appKey -eq "WPFInstalladobe" -and $_.Name -like "*Adobe Acrobat*") -or
                     ($dep -eq "9NKSQGP7F2NH" -and $_.Id -like "*5319275A.WhatsAppDesktop*") -or
                     ($dep -eq "9NBDXK71NK08" -and $_.Id -like "*5319275A.51895FA4EA97F*")
@@ -8690,7 +8690,7 @@ $sync.configs.applications = @'
     "WPFInstallOverwolf":  {
                                "category":  "Juegos",
                                "choco":  "overwolf",
-                               "content":  "Overwolf",
+                               "content":  "CurseForge",
                                "description":  "Plataforma popular para superposiciones de juegos y aplicaciones complementarias (gestores de mods, rastreadores, etc.), ampliamente utilizada por jugadores.",
                                "link":  "https://www.overwolf.com/app/overwolf-curseforge",
                                "winget":  "Overwolf.CurseForge",

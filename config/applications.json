@@ -1684,7 +1684,7 @@
     "Overwolf": {
         "category": "Juegos",
         "choco": "overwolf",
-        "content": "Overwolf",
+        "content": "CurseForge",
         "description": "Plataforma popular para superposiciones de juegos y aplicaciones complementarias (gestores de mods, rastreadores, etc.), ampliamente utilizada por jugadores.",
         "link": "https://www.overwolf.com/app/overwolf-curseforge",
         "winget": "Overwolf.CurseForge",
