@@ -3,7 +3,7 @@
     Author         : Service PC Glew @servicepcglew
     Runspace Author: @DeveloperDurp
     GitHub         : https://github.com/servicepcglew
-    Version        : 26.06.06
+    Version        : 26.06.07
 #>
 
 param (
@@ -70,7 +70,7 @@ Add-Type -AssemblyName System.Windows.Forms
 # Variable to sync between runspaces
 $sync = [Hashtable]::Synchronized(@{})
 $sync.PSScriptRoot = $PSScriptRoot
-$sync.version = "26.06.06"
+$sync.version = "26.06.07"
 $sync.configs = @{}
 $sync.Buttons = [System.Collections.Generic.List[PSObject]]::new()
 $sync.preferences = @{}
