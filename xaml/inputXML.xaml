@@ -130,6 +130,7 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <Style x:Key="EmptyStyle" TargetType="TextBlock"/>
     <Style x:Key="AppEntryNameStyle" TargetType="TextBlock">
         <Setter Property="FontSize" Value="{DynamicResource AppEntryFontSize}"/>
         <Setter Property="FontWeight" Value="Bold"/>
@@ -348,6 +349,7 @@
         <Style TargetType="{x:Type ToggleButton}">
             <Setter Property="Margin" Value="{DynamicResource ButtonMargin}"/>
             <Setter Property="Content" Value=""/>
+            <Setter Property="Foreground" Value="{DynamicResource ButtonForegroundColor}"/>
             <Setter Property="FontFamily" Value="{DynamicResource FontFamily}"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -383,9 +385,9 @@
                                 <Setter Property="Panel.ZIndex" Value="2000"/>
                             </Trigger>
                             <Trigger Property="IsChecked" Value="True">
-                                <Setter Property="BorderBrush" Value="Pink"/>
+                                <Setter Property="BorderBrush" Value="{DynamicResource ButtonBackgroundSelectedColor}"/>
                                 <Setter Property="BorderThickness" Value="2"/>
-                                <Setter TargetName="BackgroundBorder" Property="Background" Value="{DynamicResource ButtonBackgroundSelectedColor}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource ButtonBackgroundSelectedColor}"/>
                                 <Setter Property="Effect">
                                     <Setter.Value>
                                         <DropShadowEffect Opacity="1" ShadowDepth="2" Color="{DynamicResource CButtonBackgroundMouseoverColor}" Direction="-111" BlurRadius="10"/>
@@ -968,49 +970,49 @@
                 <StackPanel Name="NavLogoPanel" Orientation="Horizontal" HorizontalAlignment="Left" Background="{DynamicResource MainBackgroundColor}" SnapsToDevicePixels="True" Margin="10,0,20,0">
                 </StackPanel>
                 <ToggleButton Margin="0,0,5,0" Height="{DynamicResource TabButtonHeight}" Width="{DynamicResource TabButtonWidth}"
-                    Background="{DynamicResource ButtonInstallBackgroundColor}" Foreground="white" FontWeight="Bold" Name="WPFTab1BT">
+                    Background="{DynamicResource ButtonInstallBackgroundColor}" FontWeight="Bold" Name="WPFTab1BT">
                     <ToggleButton.Content>
-                        <TextBlock FontSize="{DynamicResource TabButtonFontSize}" Background="Transparent" Foreground="{DynamicResource ButtonInstallForegroundColor}" >
+                        <TextBlock Style="{StaticResource EmptyStyle}" FontSize="{DynamicResource TabButtonFontSize}" Background="Transparent">
                             <Underline>I</Underline>nstalar
                         </TextBlock>
                     </ToggleButton.Content>
                 </ToggleButton>
                 <ToggleButton Margin="0,0,5,0" Height="{DynamicResource TabButtonHeight}" Width="Auto" MinWidth="{DynamicResource TabButtonWidth}"
-                    Background="{DynamicResource ButtonInstallBackgroundColor}" Foreground="white" FontWeight="Bold" Name="WPFTab2BT">
+                    Background="{DynamicResource ButtonInstallBackgroundColor}" FontWeight="Bold" Name="WPFTab2BT">
                     <ToggleButton.Content>
-                        <TextBlock FontSize="{DynamicResource TabButtonFontSize}" Background="Transparent" Foreground="{DynamicResource ButtonInstallForegroundColor}" Padding="10,0,10,0">
+                        <TextBlock Style="{StaticResource EmptyStyle}" FontSize="{DynamicResource TabButtonFontSize}" Background="Transparent" Padding="10,0,10,0">
                             Web Apps (PWA)
                         </TextBlock>
                     </ToggleButton.Content>
                 </ToggleButton>
                 <ToggleButton Margin="0,0,5,0" Height="{DynamicResource TabButtonHeight}" Width="{DynamicResource TabButtonWidth}"
-                    Background="{DynamicResource ButtonTweaksBackgroundColor}" Foreground="{DynamicResource ButtonTweaksForegroundColor}" FontWeight="Bold" Name="WPFTab3BT">
+                    Background="{DynamicResource ButtonTweaksBackgroundColor}" FontWeight="Bold" Name="WPFTab3BT">
                     <ToggleButton.Content>
-                        <TextBlock FontSize="{DynamicResource TabButtonFontSize}" Background="Transparent" Foreground="{DynamicResource ButtonTweaksForegroundColor}">
+                        <TextBlock Style="{StaticResource EmptyStyle}" FontSize="{DynamicResource TabButtonFontSize}" Background="Transparent">
                             <Underline>A</Underline>justes
                         </TextBlock>
                     </ToggleButton.Content>
                 </ToggleButton>
                 <ToggleButton Margin="0,0,5,0" Height="{DynamicResource TabButtonHeight}" Width="{DynamicResource TabButtonWidth}"
-                    Background="{DynamicResource ButtonConfigBackgroundColor}" Foreground="{DynamicResource ButtonConfigForegroundColor}" FontWeight="Bold" Name="WPFTab4BT">
+                    Background="{DynamicResource ButtonConfigBackgroundColor}" FontWeight="Bold" Name="WPFTab4BT">
                     <ToggleButton.Content>
-                        <TextBlock FontSize="{DynamicResource TabButtonFontSize}" Background="Transparent" Foreground="{DynamicResource ButtonConfigForegroundColor}">
+                        <TextBlock Style="{StaticResource EmptyStyle}" FontSize="{DynamicResource TabButtonFontSize}" Background="Transparent">
                             <Underline>C</Underline>onfiguración
                         </TextBlock>
                     </ToggleButton.Content>
                 </ToggleButton>
                 <ToggleButton Margin="0,0,5,0" Height="{DynamicResource TabButtonHeight}" Width="{DynamicResource TabButtonWidth}"
-                    Background="{DynamicResource ButtonUpdatesBackgroundColor}" Foreground="{DynamicResource ButtonUpdatesForegroundColor}" FontWeight="Bold" Name="WPFTab5BT">
+                    Background="{DynamicResource ButtonUpdatesBackgroundColor}" FontWeight="Bold" Name="WPFTab5BT">
                     <ToggleButton.Content>
-                        <TextBlock FontSize="{DynamicResource TabButtonFontSize}" Background="Transparent" Foreground="{DynamicResource ButtonUpdatesForegroundColor}">
+                        <TextBlock Style="{StaticResource EmptyStyle}" FontSize="{DynamicResource TabButtonFontSize}" Background="Transparent">
                             <Underline>A</Underline>ctualizaciones
                         </TextBlock>
                     </ToggleButton.Content>
                 </ToggleButton>
                 <ToggleButton Margin="0,0,5,0" Height="{DynamicResource TabButtonHeight}" Width="Auto" MinWidth="{DynamicResource TabButtonWidth}"
-                    Background="{DynamicResource ButtonWin11ISOBackgroundColor}" Foreground="{DynamicResource ButtonWin11ISOForegroundColor}" FontWeight="Bold" Name="WPFTab6BT">
+                    Background="{DynamicResource ButtonWin11ISOBackgroundColor}" FontWeight="Bold" Name="WPFTab6BT">
                     <ToggleButton.Content>
-                        <TextBlock FontSize="{DynamicResource TabButtonFontSize}" Background="Transparent" Foreground="{DynamicResource ButtonWin11ISOForegroundColor}">
+                        <TextBlock Style="{StaticResource EmptyStyle}" FontSize="{DynamicResource TabButtonFontSize}" Background="Transparent">
                             Creador <Underline>W</Underline>in11
                         </TextBlock>
                     </ToggleButton.Content>
