@@ -1,4 +1,4 @@
-﻿---
+---
 title: Getting Started
 weight: 2
 prev: /userguide/
@@ -227,9 +227,7 @@ If you need assistance:
 
 - **Documentation**: Browse this documentation site
 - **Known Issues**: Check the [Known Issues](/knownissues/) page
-- **Discord**: Join the [community Discord server](https://discord.gg/RUbZUZyByQ)
 - **GitHub Issues**: Report bugs on [GitHub](https://github.com/servicepcglew/winutil/issues)
-- **YouTube**: Watch [video tutorials](https://www.youtube.com/watch?v=6UQZ5oQg8XA)
 
 ## Quick Reference Card
 

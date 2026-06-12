@@ -3,7 +3,7 @@
     Author         : Service PC Glew @servicepcglew
     Runspace Author: @DeveloperDurp
     GitHub         : https://github.com/servicepcglew
-    Version        : 26.06.09
+    Version        : 26.06.11
 #>
 
 param (
@@ -70,7 +70,7 @@ Add-Type -AssemblyName System.Windows.Forms
 # Variable to sync between runspaces
 $sync = [Hashtable]::Synchronized(@{})
 $sync.PSScriptRoot = $PSScriptRoot
-$sync.version = "26.06.09"
+$sync.version = "26.06.11"
 $sync.configs = @{}
 $sync.Buttons = [System.Collections.Generic.List[PSObject]]::new()
 $sync.preferences = @{}
@@ -7132,7 +7132,7 @@ $sync.configs.applications = @'
                             "foss":  true
                         },
     "WPFInstallbulkcrapuninstaller":  {
-                                          "category":  "Utilidades",
+                                          "category":  "Desinstaladores",
                                           "choco":  "bulk-crap-uninstaller",
                                           "content":  "Bulk Crap Uninstaller",
                                           "description":  "Bulk Crap Uninstaller es un desinstalador de código abierto para Windows. Permite eliminar múltiples aplicaciones de una sola vez.",
@@ -7267,7 +7267,7 @@ $sync.configs.applications = @'
                                  "foss":  true
                              },
     "WPFInstallddu":  {
-                          "category":  "Herramientas Profesionales",
+                          "category":  "Desinstaladores",
                           "choco":  "ddu",
                           "content":  "Display Driver Uninstaller",
                           "description":  "Display Driver Uninstaller (DDU) desinstala completamente los controladores gráficos de NVIDIA, AMD e Intel. Útil para solucionar problemas gráficos.",
@@ -8184,7 +8184,7 @@ $sync.configs.applications = @'
                            "foss":  true
                        },
     "WPFInstallrevo":  {
-                           "category":  "Utilidades",
+                           "category":  "Desinstaladores",
                            "choco":  "revo-uninstaller",
                            "content":  "Revo Uninstaller",
                            "description":  "Revo Uninstaller es una herramienta de desinstalación avanzada que te ayuda a eliminar software no deseado y limpiar tu sistema.",
@@ -8193,7 +8193,7 @@ $sync.configs.applications = @'
                            "foss":  false
                        },
     "WPFInstallWiseProgramUninstaller":  {
-                                             "category":  "Utilidades",
+                                             "category":  "Desinstaladores",
                                              "choco":  "na",
                                              "content":  "Wise Program Uninstaller (WiseCleaner)",
                                              "description":  "Wise Program Uninstaller es la solución perfecta para desinstalar programas de Windows, rápida y completamente a través de su interfaz sencilla.",
@@ -8899,6 +8899,20 @@ $sync.configs.appnavigation = @'
                            "Order":  "2",
                            "Description":  "Activa Windows 7 Pro o Enterprise mediante KMS"
                        },
+    "WPFActivation3":  {
+                           "Content":  "Windows XP Universal",
+                           "Category":  "z__Activaciones",
+                           "Type":  "Button",
+                           "Order":  "3",
+                           "Description":  "Inyecta la clave corporativa de Windows XP"
+                       },
+    "WPFBulkCrapUninstallerInstall":  {
+                                          "Content":  "Bulk-Crap-Uninstaller (instalar)",
+                                          "Category":  "zz__Desinstalaciones",
+                                          "Type":  "Button",
+                                          "Order":  "1",
+                                          "Description":  "Instala Bulk Crap Uninstaller en tu sistema usando Winget"
+                                      },
     "WPFBulkCrapUninstaller":  {
                                    "Content":  "Bulk-Crap-Uninstaller (portable)",
                                    "Category":  "zz__Desinstalaciones",

@@ -1,4 +1,4 @@
-﻿baseURL = "https://servicepcglew-winutil.pages.dev/"
+baseURL = "https://servicepcglew-winutil.pages.dev/"
 languageCode = "en-us"
 title = "Winutil Documentation"
 enableGitInfo = true
@@ -55,10 +55,7 @@ pageRef = "KnownIssues.md"
 weight = 2
 parent = "help"
 
-[[menu.main]]
-name = "Store"
-url = "https://christitus.com/downloads/"
-weight = 5
+
 
 [[menu.main]]
 name = "Search"
@@ -121,10 +118,7 @@ display = "hover"
   url = "https://github.com/servicepcglew/winutil"
   weight = 2
 
-  [[menu.sidebar]]
-  name = "Discord Server ↗"
-  url = "https://discord.gg/RUbZUZyByQ"
-  weight = 3
+
 
 
 [markup]

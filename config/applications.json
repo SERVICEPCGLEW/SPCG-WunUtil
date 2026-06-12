@@ -126,7 +126,7 @@
         "foss": true
     },
     "bulkcrapuninstaller": {
-        "category": "Utilidades",
+        "category": "Desinstaladores",
         "choco": "bulk-crap-uninstaller",
         "content": "Bulk Crap Uninstaller",
         "description": "Bulk Crap Uninstaller es un desinstalador de código abierto para Windows. Permite eliminar múltiples aplicaciones de una sola vez.",
@@ -261,7 +261,7 @@
         "foss": true
     },
     "ddu": {
-        "category": "Herramientas Profesionales",
+        "category": "Desinstaladores",
         "choco": "ddu",
         "content": "Display Driver Uninstaller",
         "description": "Display Driver Uninstaller (DDU) desinstala completamente los controladores gráficos de NVIDIA, AMD e Intel. Útil para solucionar problemas gráficos.",
@@ -1178,7 +1178,7 @@
         "foss": true
     },
     "revo": {
-        "category": "Utilidades",
+        "category": "Desinstaladores",
         "choco": "revo-uninstaller",
         "content": "Revo Uninstaller",
         "description": "Revo Uninstaller es una herramienta de desinstalación avanzada que te ayuda a eliminar software no deseado y limpiar tu sistema.",
@@ -1187,7 +1187,7 @@
         "foss": false
     },
     "WiseProgramUninstaller": {
-        "category": "Utilidades",
+        "category": "Desinstaladores",
         "choco": "na",
         "content": "Wise Program Uninstaller (WiseCleaner)",
         "description": "Wise Program Uninstaller es la solución perfecta para desinstalar programas de Windows, rápida y completamente a través de su interfaz sencilla.",

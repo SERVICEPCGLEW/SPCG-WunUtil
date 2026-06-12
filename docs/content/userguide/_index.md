@@ -1,4 +1,4 @@
-﻿---
+---
 title: User Guide
 weight: 2
 breadcrumbs: false
@@ -129,9 +129,7 @@ Need help?
 - **📖 Documentation**: You're reading it! Use the navigation menu
 - **❓ FAQ**: Check [Frequently Asked Questions](../faq/)
 - **🐛 Known Issues**: Review [Known Issues](../knownissues/)
-- **💬 Discord**: Join the [community Discord](https://discord.gg/RUbZUZyByQ)
 - **🐙 GitHub**: Report bugs on [GitHub Issues](https://github.com/servicepcglew/winutil/issues)
-- **📺 YouTube**: Watch [video tutorials](https://www.youtube.com/watch?v=6UQZ5oQg8XA)
 
 ## Contributing
 
@@ -141,15 +139,10 @@ Want to help improve Winutil?
 - **Suggest Features**: Open feature requests
 - **Contribute Code**: Submit pull requests
 - **Improve Docs**: Help expand this documentation
-- **Share Knowledge**: Help others in Discord
+
 
 **[Read Contributing Guide →](../contributing/)**
 
-## Video Tutorial
-
-Watch the complete Winutil overview:
-
-{{< youtube id=6UQZ5oQg8XA loading=lazy >}}
 
 Ready to get started? Head to the **[Getting Started Guide](getting-started/)**.
 

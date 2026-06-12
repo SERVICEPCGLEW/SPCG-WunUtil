@@ -81,6 +81,20 @@
         "Order": "2",
         "Description": "Activa Windows 7 Pro o Enterprise mediante KMS"
     },
+    "WPFActivation3": {
+        "Content": "Windows XP Universal",
+        "Category": "z__Activaciones",
+        "Type": "Button",
+        "Order": "3",
+        "Description": "Inyecta la clave corporativa de Windows XP"
+    },
+    "WPFBulkCrapUninstallerInstall": {
+        "Content": "Bulk-Crap-Uninstaller (instalar)",
+        "Category": "zz__Desinstalaciones",
+        "Type": "Button",
+        "Order": "1",
+        "Description": "Instala Bulk Crap Uninstaller en tu sistema usando Winget"
+    },
     "WPFBulkCrapUninstaller": {
         "Content": "Bulk-Crap-Uninstaller (portable)",
         "Category": "zz__Desinstalaciones",
