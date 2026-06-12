@@ -6,7 +6,7 @@
 
 *[English version below](#english-version)*
 
-  Esta es la utilidad de mantenimiento, optimización y configuración de Windows. Basado em CTT winutil.
+  Esta es la utilidad de mantenimiento, optimización y configuración de Windows. Basado en CTT winutil.
 
 Esta herramienta está diseñada para agilizar la instalación de programas, optimizar el sistema eliminando software innecesario (debloat), ajustar configuraciones para mejorar el rendimiento general y solucionar problemas comunes de Windows.
 
