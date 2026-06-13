@@ -4,6 +4,8 @@
 ![GitHub Downloads](https://img.shields.io/github/downloads/ServicePCGlew/winutil/winutil.ps1?label=Total%20Downloads&style=for-the-badge)
 [![Static Badge](https://img.shields.io/badge/Documentation-_?style=for-the-badge&logo=bookstack&color=grey)](https://servicepcglew-winutil.pages.dev/)
 
+![WinUtil Interfaz](screenshot.png)
+
 **WinUtil** es la herramienta definitiva de mantenimiento, optimización y configuración para sistemas operativos Windows. Basado en el núcleo de CTT, automatiza la instalación de programas esenciales, realiza un *debloat* profundo del sistema y soluciona problemas comunes de rendimiento.
 
 ## 🤖 Preguntas y Respuestas (FAQ)
