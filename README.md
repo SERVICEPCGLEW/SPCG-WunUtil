@@ -62,4 +62,4 @@ cd winutil
 
 ## 📄 Licencia
 
-Este proyecto se distribuye **Sin Licencia** (Todos los derechos reservados). El uso, copia o distribución queda a estricto criterio del autor.
+Este proyecto está bajo la **Licencia MIT**. Basado fuertemente en el trabajo original de **Chris Titus (Chris Titus Tech)**, a quien se le otorgan los créditos por el motor base (`CTT winutil`). Eres libre de usar, modificar y distribuir esta versión modificada por Service PC Glew siempre que se mantengan los créditos originales.
