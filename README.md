@@ -59,3 +59,7 @@ cd winutil
 ## 🆘 Soporte y Documentación
 *   [📖 Leer la Documentación Oficial](https://servicepcglew-winutil.pages.dev/)
 *   [🐛 Reportar un Problema (Issues)](https://github.com/servicepcglew/winutil/issues)
+
+## 📄 Licencia
+
+Este proyecto se distribuye **Sin Licencia** (Todos los derechos reservados). El uso, copia o distribución queda a estricto criterio del autor.
